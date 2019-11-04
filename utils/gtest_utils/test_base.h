@@ -5,6 +5,9 @@
     method_name(__VA_ARGS__);                 \
   }
 
+/**
+ * @brief Base class wrapped around GTest
+ */
 class TestBase : public testing::Test {
  public:
   explicit TestBase();

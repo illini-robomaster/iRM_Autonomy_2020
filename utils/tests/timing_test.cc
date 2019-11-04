@@ -7,6 +7,9 @@ using namespace timing;
 
 class TimingTest : public TestBase {
  public:
+   /**
+    * @brief example usage of basic TicToc profiler
+    */
   void TicTocTest() {
     TicTocGlobalReset();
     TicToc tictoc_out("Outer Loop");
@@ -39,6 +42,9 @@ class TimingTest : public TestBase {
     std::cout << TicTocGlobalSummary() << std::endl;
   }
 
+  /**
+   * @brief example usage of TIC_TOC_SOPE
+   */
   void TicTocScopeTest() {
     TicTocGlobalReset();
 
@@ -51,6 +57,9 @@ class TimingTest : public TestBase {
     std::cout << TicTocGlobalSummary() << std::endl;
   }
 
+  /**
+   * @brief example usage of TIC_TOC_FUNCTION
+   */
   void TicTocFunctionTest() {
     TicTocGlobalReset();
 
