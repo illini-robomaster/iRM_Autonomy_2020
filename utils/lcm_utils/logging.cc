@@ -27,14 +27,14 @@ void LCMFileLogger::MessageHandler(const ReceiveBuffer *rbuf, const std::string 
   logfile_ptr_->writeEvent(&event);
 }
 
-int LCMFileLogger::Start() {
+int LCMFileLogger::Start(bool overwrite) {
   if (promise_start_) {
     return -1;
   }
   promise_start_ = std::make_unique<std::promise<void>>();
   stop_signal_ = promise_start_->get_future();
   subscription_ = lcm_.subscribe(".*", &LCMFileLogger::MessageHandler, this);
-  logfile_ptr_ = std::make_unique<lcm::LogFile>(filename_, "w");
+  logfile_ptr_ = std::make_unique<lcm::LogFile>(filename_, overwrite ? "w" : "a");
   start_time_ = std::chrono::steady_clock::now();
   thread_ptr_ = std::make_unique<std::thread>(&LCMFileLogger::EventLoop, this);
 
