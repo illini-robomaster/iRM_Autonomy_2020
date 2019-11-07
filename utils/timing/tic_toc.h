@@ -7,8 +7,8 @@
 #define kSecPerNanoSec 1e-9
 
 /* @see utils/tests/timing_test.cc for detailed usage */
-#define TIC_TOC_SCOPE(name) ScopedTicToc scoped_tictoc_##name(#name)
-#define TIC_TOC_FUNCTION() ScopedTicToc function_scoped_tictoc(__FUNCTION__)
+#define TIC_TOC_SCOPE(name) timing::ScopedTicToc scoped_tictoc_##name(#name)
+#define TIC_TOC_FUNCTION() timing::ScopedTicToc function_scoped_tictoc(__FUNCTION__)
 
 namespace timing {
 
