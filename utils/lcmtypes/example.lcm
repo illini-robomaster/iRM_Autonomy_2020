@@ -1,0 +1,19 @@
+package example;
+
+struct int32_vec3d_t {
+  int32_t x;
+  int32_t y;
+  int32_t z;
+}
+
+struct int32_vec4d_t {
+  int32_t x;
+  int32_t y;
+  int32_t z;
+  int32_t w;
+}
+
+struct int32_array_t {
+  int32_t size;
+  int32_t data[size];
+}
