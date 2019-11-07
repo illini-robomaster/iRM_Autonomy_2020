@@ -17,9 +17,13 @@ endif ()
 
 SET(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED)
+find_package(lcm REQUIRED)
 find_package(GTest REQUIRED)
+
+include(${LCM_USE_FILE}) # lcm related cmake helper functions
 
 include_directories(.)
 
 enable_testing()
+
 add_subdirectory(utils)
