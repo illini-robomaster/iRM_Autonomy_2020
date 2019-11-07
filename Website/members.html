@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Cache-Control" content="no-transform" /> 
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=yes" />
+<meta charset="utf-8">
+<script>window.onload = function() {
+    if (screen.width < 1000) {
+        var mvp = document.getElementById('vp');
+        mvp.setAttribute('content','user-scalable=no,width=1000');
+    }
+}</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<title>Members</title>
+<style>
+#page{
+	background-color: white;
+	text-align: center;
+	width: 100%;
+	overflow: hidden;
+}
+#navbarNav{
+	margin-top: 0.3125em;
+	background-color: #2E2E2E;
+	height: 2.3em;
+	width: 100%;
+	min-width: 50em;
+	overflow: hidden;
+}
+#line{
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	font-family: avenir;
+	font-weight: 250;
+	font-size: 1em;
+}
+#navbarNav ul{
+	margin-top: 0.5em;
+	list-style-type: none;
+	display: inline-block;
+}
+#navbarNav ul li{
+	float: left;
+}
+#navbarNav a{
+	display: block;
+	width: 140px;
+	color: white;
+}
+#Header{
+	height: 250px;
+	font-size: 2.375em;
+	width: 100%;
+	background-image: url("./Design/Image_About_Us/About_Us_Header.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	overflow: hidden;
+}
+#Header li{
+	font-family: avenir;
+	position: absolute;
+	left: 23%;
+	top: 16%;
+	text-decoration: none;
+	list-style-type: none;
+	overflow: hidden;
+	color: white;
+}
+
+#manymanymanypeople{
+	position: relative;
+	width: 60%;
+	left: 20%;
+	overflow: hidden;
+	height: 100%;
+	background-color: white;
+}
+#boardmembers{
+	margin-top: 40px;
+	width: 100%;
+}
+#teammembers{
+	margin-top: 40px;
+	width: 100%;
+	margin-bottom: 60px;
+}
+#advisor li{
+	text-decoration: none;
+	list-style-type: none;
+	font-size: 1.4em;
+}
+#sponsor{
+	background-color: #2E2E2E;
+	height: 160px;
+	width: 100%;
+	position: relative;
+}
+#sponsor img{
+	position: center;
+	margin-top: 100px;
+	margin-bottom: 0px;
+}
+#sponsor p{
+	position: center;
+	margin-top: 4px;
+	margin-bottom: 0px;
+	font-size: 9px;
+	color: #808080;
+}
+#sponsorLeft ul1{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	color: white;
+	font-family: avenir;
+	font-weight: 100;
+	font-size: 10px;
+	position: absolute;
+	left: 30%;
+	margin-top: 20px;
+	line-height: 20px;
+}
+#sponsorLeft ul1 a{
+	display: block;
+	width: 110px;
+}
+#sponsorRight ul2{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	color: white;
+	font-family: avenir;
+	font-weight: 100;
+	font-size: 10px;
+	position: absolute;
+	right: 30%;
+	margin-top: 20px;
+	line-height: 20px;
+}
+#sponsorRight ul2 a{
+	display: block;
+	width: 130px;
+}
+</style>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #2E2E2E;" role="navigation" >
+	<a class="navbar-brand" href="#"></a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    	<span class="navbar-toggler-icon"></span>
+  </button>
+	<div class="collapse navbar-collapse" id="navbarNav">
+	<div id="line">
+	  <ul class="nav navbar-nav">
+	  		<li class="nav-item"><a class="nav-link" href="index.html"><img src="./Design/Image_General/Top_logo.svg" width= 49 height=19></a></li>
+			<li class="nav-item"><a class="nav-link" href="aboutus.html" >ABOUT US</a></li>
+			<li class="nav-item"><a class="nav-link" href="competition.html">COMPETITION</a></li>
+			<li class="nav-item"><a class="nav-link" href="members.html">MEMBERS</a></li>
+			<li class="nav-item"><a class="nav-link" href="sponsers.html">SPONSORS</a></li>
+			<li class="nav-item"><a class="nav-link" href="blog.html">BLOG</a></li>
+			<li class="nav-item"><a class="nav-link" href="opensource.html">OPEN SOURCE</a></li>
+	  </ul>
+  	</div>
+  </div>
+
+		
+</nav>
+	<div id="Header">
+		<li>Members</li>
+	</div>
+	<div id="manymanymanypeople">
+	<div id="boardmembers">
+		<img src="./Design/Image_Members/board.png" width=100%>
+	</div>
+	<div id="advisor">
+		<center><li><span style="color: #FE6601; text-decoration: none; font-size: 1.4em; font-weight:300;">Advisor</span></br></br><a href="https://ece.illinois.edu/directory/profile/jiang56" style="text-decoration:none; color:black;">JING JIANG</br></br>Website Link: https://ece.illinois.edu/directory/profile/jiang56</a></li></center>
+	</div>
+	<div id="teammembers">
+		<img src="./Design/Image_Members/FINAL.png" width=100%>
+	</div>
+</div>
+
+
+	<div id="sponsor">
+		<div id="sponsorLeft">
+			<ul1>
+				<li1><a href="contactus.html" style="color:#C0C0C0; text-decoration:none;">Contact Us</a></li1>
+				<li2><a href="robomaster.html" style="color:#C0C0C0; text-decoration:none;">RoboMaster Website</a></li2>
+				<li3><a href="robomasterbbs.html" style="color:#C0C0C0; text-decoration:none;">RoboMaster BBS</a></li3>
+				<li4><a href="uiuc.html" style="color:#C0C0C0; text-decoration:none;">University of Illinois</a></li4>
+			</ul1>
+		</div>
+		<div id="sponsorRight">
+			<ul2>
+				<li1><a href="slack.html" style="color:#C0C0C0; text-decoration:none;">Slack</a></li1>
+				<li2><a href="googledrive.html" style="color:#C0C0C0; text-decoration:none;">Google Drive</a></li2>
+				<li3><a href="githubcs.html" style="color:#C0C0C0; text-decoration:none;">Github CS Repository</a></li3>
+				<li4><a href="githubece.html" style="color:#C0C0C0; text-decoration:none;">Github ECE Repository</a></li4>
+			</ul2>
+		</div>
+			<center><img src="./Design/Image_General/Bottom_logo.svg" height=20px width=150px></center>
+			<center><p>Copyright © Illini Robomaster 2017</p></center>
+		</div>
+</body>
+</html>

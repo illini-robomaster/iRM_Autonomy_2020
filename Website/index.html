@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<title>Home Page</title>
+
+<head>
+<meta http-equiv="Cache-Control" content="no-transform" /> 
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=yes" />
+<meta charset="utf-8">
+<script>window.onload = function() {
+    if (screen.width < 1000) {
+        var mvp = document.getElementById('vp');
+        mvp.setAttribute('content','user-scalable=no,width=1000');
+    }
+}</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<style>
+#page{
+	background-color: white;
+	text-align: center;
+	width: 100%;
+	overflow: hidden;
+}
+#topSymbol{
+	text-align: center;
+	background-color: white;
+	height: 7.5em auto;
+	width: 100%;
+	overflow: hidden;
+}
+#navbarNav{
+	margin-top: 0.3125em;
+	height: 2.3em;
+	width: 100%;
+	min-width: 50em;
+	overflow: hidden;
+}
+#line{
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	font-family: avenir;
+	font-weight: 250;
+	font-size: 1em;
+}
+#navbarNav ul{
+	margin-top: 0.5em;
+	list-style-type: none;
+	display: inline-block;
+}
+#navbarNav ul li{
+	float: left;
+}
+#navbarNav a{
+	display: block;
+	width: 140px;
+	color: white;
+}
+#mainBody{
+	margin-top: 0px;
+	margin-bottom: 0px;
+	text-align: center;
+	background-color: white;
+	height: 500px;
+	width: 100%;
+}
+#mainBody img{
+	text-align: right;
+	float: right;
+}
+#textpart{
+	position: relative;
+	left: 8%;
+	top: 18%;
+	min-height: 20%;
+}
+#mainBody li1{
+	position: absolute;
+	font-size: 2.5em;
+	font-family: avenir;
+	font-weight: 500;
+}
+#mainBody li2{
+	position: absolute;
+	text-align: left;
+	font-size: 0.875em;
+	font-family: avenir;
+	font-weight: 100;
+	line-height: 1.875em;
+	margin-top: 4%;
+}
+#mainBody li3{
+	position: absolute;
+	font-size: 0.8125em;
+	font-family: avenir;
+	font-weight: 100;
+	color: #F9904C;
+	margin-top: 9%;
+}
+#mainBody li4{
+	position: absolute;
+	font-size: 0.8125em;
+	font-family: avenir;
+	font-weight: 100;
+	color: #F9904C;
+	margin-top: 10.5%;
+}
+#mainText{
+	width: 100%;
+	height: 250px;
+	background-color: #FCFCFC;
+}
+#left{
+	position: relative;
+	top: 15%;
+	width: 50%;
+}
+#left li1{
+	position: absolute;
+	font-size: 1.875em;
+	font-family: avenir;
+	font-weight: 500;
+	margin-left: 6.5%;
+}
+#left li2{
+	position: absolute;
+	text-align: center;
+	font-size: 0.875em;
+	font-family: avenir;
+	font-weight: 100;
+	line-height: 150%;
+	margin-top: 70px;
+}
+#left li3{
+	position: absolute;
+	font-size: 0.8125em;
+	font-family: avenir;
+	font-weight: 100;
+	color: #F9904C;
+	margin-top: 130px;
+	margin-left: 10%;
+}
+#right{
+	position: relative;
+	top: 15%;
+	margin-left: 29%;
+	width: 70%;
+}
+#right li1{
+	position: absolute;
+	font-size: 1.875em;
+	font-family: avenir;
+	font-weight: 500;
+	margin-left: 4%;
+}
+#right li2{
+	position: absolute;
+	text-align: center;
+	font-size: 0.875em;
+	font-family: avenir;
+	font-weight: 100;
+	line-height: 150%;
+	margin-top: 70px;
+
+}
+#right li3{
+	position: absolute;
+	font-size: 0.8125em;
+	font-family: avenir;
+	font-weight: 100;
+	color: #F9904C;
+	margin-top: 130px;
+	margin-left: 6%;
+}
+#sponsor{
+	background-color: #2E2E2E;
+	height: 160px;
+	width: 100%;
+	position: relative;
+}
+#sponsor img{
+	position: center;
+	margin-top: 120px;
+	margin-bottom: 0px;
+}
+#sponsor p{
+	position: center;
+	margin-top: 4px;
+	margin-bottom: 0px;
+	font-size: 9px;
+	color: #808080;
+}
+#sponsorLeft ul1{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	color: white;
+	font-family: avenir;
+	font-weight: 100;
+	font-size: 10px;
+	position: absolute;
+	left: 30%;
+	margin-top: 20px;
+	line-height: 20px;
+}
+#sponsorLeft ul1 a{
+	display: block;
+	width: 110px;
+}
+#sponsorRight ul2{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	color: white;
+	font-family: avenir;
+	font-weight: 100;
+	font-size: 10px;
+	position: absolute;
+	right: 30%;
+	margin-top: 20px;
+	line-height: 20px;
+}
+#sponsorRight ul2 a{
+	display: block;
+	width: 130px;
+}
+</style>
+</head>
+<body>
+<div id="page">
+<div id="topSymbol"><img src="./Design/Image_Homepage/Home_page_logo.svg" height="118" width="118"></div>
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #2E2E2E;" role="navigation" >
+	<a class="navbar-brand" href="#"></a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    	<span class="navbar-toggler-icon"></span>
+  </button>
+	<div class="collapse navbar-collapse" id="navbarNav">
+	<div id="line">
+	  <ul class="nav navbar-nav">
+			<li class="nav-item"><a class="nav-link" href="aboutus.html" >ABOUT US</a></li>
+			<li class="nav-item"><a class="nav-link" href="aboutrobomaster.html">COMPETITION</a></li>
+			<li class="nav-item"><a class="nav-link" href="members.html">MEMBERS</a></li>
+			<li class="nav-item"><a class="nav-link" href="sponsors.html">SPONSORS</a></li>
+			<li class="nav-item"><a class="nav-link" href="blog.html">BLOG</a></li>
+			<li class="nav-item"><a class="nav-link" href="opensource.html">OPEN SOURCE</a></li>
+	  </ul>
+  	</div>
+  </div>
+
+		
+</nav>
+<div id="mainBody">
+	<img src="./Design/Image_Homepage/123017-3.png" width="1085" height="500">
+	<div id="textpart">
+	<li1>Illini RoboMaster</li1>
+	<li2>A team of Mechnical Engineers, Computer <br>Engineers, and Software Engineers.</li2>
+	<li3><a href="aboutus.html"  style="color:#F9904C; text-decoration:none;">Learn more about our team</a></li3>
+	<li4><a href="aboutrobomaster.html"  style="color:#F9904C; text-decoration:none;">Learn more about RoboMaster</a></li4>
+	</div>
+</div>
+
+<div id="mainText">
+<div id="left">
+	<li1>Be a Member</li1>
+	<li2>Join us, build our robots, share your thoughts, <br>practice what you've learned</li2>
+	<li3><a href="members.html"  style="color:#F9904C; text-decoration:none;">How to be a member</a></li3>
+</div>
+<div id="right">
+	<li1>Be a Sponsor</li1>
+	<li2>Help us develop our most powerful and <br>versatile robots.</li2>
+	<li3><a href="sponsors.html"  style="color:#F9904C; text-decoration:none;">How to be a sponsor</a></li3>
+</div>
+</div>
+<div id="sponsor">
+<div id="sponsorLeft">
+<ul1>
+<li1><a href="members.html" style="color:#C0C0C0; text-decoration:none;">Contact Us</a></li1>
+<li2><a href="https://www.robomaster.com/en-US" style="color:#C0C0C0; text-decoration:none;">RoboMaster Website</a></li2>
+<li3><a href="http://bbs.robomasters.com/portal.php" style="color:#C0C0C0; text-decoration:none;">RoboMaster BBS</a></li3>
+<li4><a href="http://illinois.edu" style="color:#C0C0C0; text-decoration:none;">University of Illinois</a></li4>
+</ul1>
+</div>
+<div id="sponsorRight">
+<ul2>
+<li1><a href="https://illinirm.slack.com/messages/C7Q55FM40/" style="color:#C0C0C0; text-decoration:none;">Slack</a></li1>
+<li2><a href="https://drive.google.com/open?id=0B-fs0fmWTI0uSFhUc3dCY0NBWjQ" style="color:#C0C0C0; text-decoration:none;">Google Drive</a></li2>
+<li3><a href="https://github.com/alvinsunyixiao/IlliniRM" style="color:#C0C0C0; text-decoration:none;">Github CS Repository</a></li3>
+<li4><a href="https://github.com/keeees/RM_ECE" style="color:#C0C0C0; text-decoration:none;">Github ECE Repository</a></li4>
+</ul2>
+</div>
+<center><img src="./Design/Image_General/Bottom_logo.svg" height=15px width=150px></center>
+<center><p>Copyright © Illini Robomaster 2017</p></center>
+</div>
+</div>
+</body>
+</html>
