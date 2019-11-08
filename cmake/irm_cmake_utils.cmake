@@ -1,5 +1,5 @@
 # helper function for adding cpp tests
-#   will look in to the "./tests" directory and search for <test_name>.cc
+#   will look into the "./tests" directory and search for <test_name>.cc
 #   example usage:
 #       irm_add_cc_test(NAME random_test DEPENDS gtest_util)
 function(irm_add_cc_test)
@@ -11,6 +11,11 @@ function(irm_add_cc_test)
     gtest_discover_tests(${TEST_ARG_NAME})
 endfunction()
 
+# helper function for generate static librareis from lcmtypes
+#   will look into the "./lcmtypes" directory and search for <lcm_name>.lcm
+#   example usage:
+#       irm_add_lcm_library(NAME example LIB example_lcm)
+#       the ${example_lcm} will be set to the generated library from example.lcm structures
 function(irm_add_lcm_library)
     cmake_parse_arguments(LCM "" "NAME;LIB" "" ${ARGN})
     lcm_wrap_types(CPP_HEADERS LCM_HEADERS CPP11

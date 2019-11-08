@@ -67,8 +67,8 @@ class LCMFileLogger {
   lcm::LCM lcm_;
   lcm::Subscription *subscription_;
 
-  std::chrono::steady_clock::time_point start_time_;
   std::future<void> stop_signal_;
+  std::unique_ptr<std::chrono::steady_clock::time_point> start_time_;
   std::unique_ptr<std::promise<void>> promise_start_;
   std::unique_ptr<std::thread> thread_ptr_;
   std::unique_ptr<lcm::LogFile> logfile_ptr_;

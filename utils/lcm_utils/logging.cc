@@ -18,7 +18,7 @@ void LCMFileLogger::EventLoop() {
 
 void LCMFileLogger::MessageHandler(const ReceiveBuffer *rbuf, const std::string &channel) {
   auto now = std::chrono::steady_clock::now();
-  micro_sec_t timestamp = std::chrono::duration_cast<micro_sec_t>(now - start_time_);
+  micro_sec_t timestamp = std::chrono::duration_cast<micro_sec_t>(now - *start_time_);
   lcm::LogEvent event;
   event.timestamp = timestamp.count();
   event.channel = channel;
@@ -35,7 +35,10 @@ int LCMFileLogger::Start(bool overwrite) {
   stop_signal_ = promise_start_->get_future();
   subscription_ = lcm_.subscribe(".*", &LCMFileLogger::MessageHandler, this);
   logfile_ptr_ = std::make_unique<lcm::LogFile>(filename_, overwrite ? "w" : "a");
-  start_time_ = std::chrono::steady_clock::now();
+  if (!start_time_ || overwrite) {
+    start_time_ = 
+      std::make_unique<std::chrono::steady_clock::time_point>(std::chrono::steady_clock::now());
+  }
   thread_ptr_ = std::make_unique<std::thread>(&LCMFileLogger::EventLoop, this);
 
   return 0;
