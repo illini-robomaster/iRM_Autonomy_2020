@@ -1,9 +1,13 @@
 #include <iostream>
+#include <thread>
 
 #include "utils/timing/tic_toc.h"
 #include "utils/gtest_utils/test_base.h"
 
 using namespace timing;
+
+// prevent loop body from being opimized out
+volatile thread_local double dummy_variable;
 
 class TimingTest : public TestBase {
  public:
@@ -18,7 +22,9 @@ class TimingTest : public TestBase {
     tictoc_out.Tic();
     for (double i = 0; i < 1000; ++i) {
       tictoc_in.Tic();
-      for (double j = 0; j < 1000; ++j);
+      for (double j = 0; j < 1000; ++j) {
+        dummy_variable = i + j;
+      }
       tictoc_in.Toc();
     }
     tictoc_out.Toc();
@@ -26,18 +32,20 @@ class TimingTest : public TestBase {
     tictoc_out.Tic();
     for (double i = 0; i < 1000; ++i) {
       tictoc_in.Tic();
-      for (double j = 0; j < 1000; ++j);
+      for (double j = 0; j < 1000; ++j) {
+        dummy_variable = i + j;
+      }
       tictoc_in.Toc();
     }
     tictoc_out.Toc();
-    // third run
-    tictoc_out.Tic();
+    // Tic / Toc macro (not reusable with the same name within the same scope)
+    TIC(TOTAL_LOOP);
     for (double i = 0; i < 1000; ++i) {
-      tictoc_in.Tic();
-      for (double j = 0; j < 1000; ++j);
-      tictoc_in.Toc();
+      for (double j = 0; j < 1000; ++j) {
+        dummy_variable = i + j;
+      }
     }
-    tictoc_out.Toc();
+    TOC(TOTAL_LOOP);
     std::cout << "[ TicTocTest ] Time Summary:" << std::endl;
     std::cout << TicTocGlobalSummary() << std::endl;
   }
@@ -50,7 +58,9 @@ class TimingTest : public TestBase {
 
     {
       TIC_TOC_SCOPE(TicTocScopeTest);
-      for (double i = 0; i < 1000000; ++i);
+      for (double i = 0; i < 1000000; ++i) {
+        dummy_variable = i;
+      }
     }
 
     std::cout << "[ TicTocScopeTest ] Time Summary:" << std::endl;
@@ -69,6 +79,13 @@ class TimingTest : public TestBase {
     TimeConsumingFunction();
     TimeConsumingFunction();
 
+    // test: multi thread
+    std::thread t1(&TimingTest::TimeConsumingFunction, this);
+    std::thread t2(&TimingTest::TimeConsumingFunction, this);
+
+    t1.detach();
+    t2.join();
+
     std::cout << "[ TicTocFunctionTest ] Time Summary:" << std::endl;
     std::cout << TicTocGlobalSummary() << std::endl;
   }
@@ -76,7 +93,9 @@ class TimingTest : public TestBase {
  private:
   void TimeConsumingFunction() {
     TIC_TOC_FUNCTION();
-    for (double i = 0; i < 1000000; ++i);
+    for (double i = 0; i < 1000000; ++i) {
+      dummy_variable = i;
+    }
   }
 };
 

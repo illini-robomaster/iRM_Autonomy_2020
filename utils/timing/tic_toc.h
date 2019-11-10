@@ -1,8 +1,11 @@
 #pragma once
 
 #include <chrono>
+#include <mutex>
 #include <string>
 #include <unordered_map>
+
+#include <lcmtypes/timing/tictoc_t.hpp>
 
 #define kSecPerNanoSec 1e-9
 
@@ -10,7 +13,14 @@
 #define TIC_TOC_SCOPE(name) timing::ScopedTicToc scoped_tictoc_##name(#name)
 #define TIC_TOC_FUNCTION() timing::ScopedTicToc function_scoped_tictoc(__FUNCTION__)
 
+#define TIC(name) timing::TicToc local_tictoc_##name(#name)
+#define TOC(name) local_tictoc_##name.Toc()
+
 namespace timing {
+
+typedef std::chrono::duration<int64_t, std::milli> milli_sec_t;
+typedef std::chrono::duration<int64_t, std::micro> micro_sec_t;
+typedef std::chrono::duration<int64_t, std::nano> nano_sec_t;
 
 /***********************
  * --- TicTocStats --- *
@@ -19,9 +29,10 @@ namespace timing {
 /**
  * @brief timing statistics for one profiled target
  */
-class TicTocStats {
+class TicTocStats : public tictoc_stats_t {
  public:
   TicTocStats();
+  TicTocStats(tictoc_stats_t &stats);
 
   void Update(int64_t duration_ns);
   void Reset();
@@ -31,12 +42,6 @@ class TicTocStats {
   double MaxTime();
   double MinTime();
   int32_t Count();
- 
- private:
-  int32_t num_stats_;
-  int64_t min_time_ns_;
-  int64_t max_time_ns_;
-  int64_t total_time_ns_;
 };
 
 /**********************
@@ -62,10 +67,17 @@ class TicTocBank {
    * @param duration_ns time duration in nano seconds
    */
   void Update(const std::string &name, int64_t duration_ns);
-  std::unordered_map<std::string, TicTocStats> GetSummary();
+
+  /**
+   * @brief get tic toc summary as lcm data struct
+   *
+   * @return tic toc lcm data struct
+   */
+  tictoc_t GetLCM();
  
  private:
   std::unordered_map<std::string, TicTocStats> channel_map_;
+  std::mutex lock_;
 };
 
 /******************
@@ -104,7 +116,7 @@ class TicToc {
   void Toc();
  
  private:
-  std::chrono::time_point<std::chrono::high_resolution_clock> start_;
+  std::chrono::time_point<std::chrono::steady_clock> start_;
   std::string name_;
 };
 
@@ -130,7 +142,7 @@ class ScopedTicToc {
   ~ScopedTicToc();
 
  private:
-  std::chrono::time_point<std::chrono::high_resolution_clock> start_;
+  std::chrono::time_point<std::chrono::steady_clock> start_;
   std::string name_;
 };
 

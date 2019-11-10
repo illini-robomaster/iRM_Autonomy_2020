@@ -18,7 +18,8 @@ void LCMFileLogger::EventLoop() {
 
 void LCMFileLogger::MessageHandler(const ReceiveBuffer *rbuf, const std::string &channel) {
   auto now = std::chrono::steady_clock::now();
-  micro_sec_t timestamp = std::chrono::duration_cast<micro_sec_t>(now - *start_time_);
+  timing::micro_sec_t timestamp = 
+      std::chrono::duration_cast<timing::micro_sec_t>(now - *start_time_);
   lcm::LogEvent event;
   event.timestamp = timestamp.count();
   event.channel = channel;

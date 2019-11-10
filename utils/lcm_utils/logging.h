@@ -9,9 +9,6 @@
 
 #include <lcm/lcm-cpp.hpp>
 
-// TODO(alvin): maybe move this to a more general location later?
-typedef std::chrono::duration<int64_t, std::micro> micro_sec_t;
-
 namespace lcm {
 
 /**
