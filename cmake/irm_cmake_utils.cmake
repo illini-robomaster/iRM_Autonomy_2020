@@ -22,6 +22,7 @@ function(irm_add_lcm_library)
                    DESTINATION ${CMAKE_BINARY_DIR}/lcmtypes
                    ${CMAKE_CURRENT_SOURCE_DIR}/lcmtypes/${LCM_NAME}.lcm)
     lcm_add_library(${LCM_NAME}_lcm CPP ${LCM_HEADERS})
-    target_include_directories(${LCM_NAME}_lcm INTERFACE ${CMAKE_BINARY_DIR})
+    target_include_directories(${LCM_NAME}_lcm INTERFACE
+        ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/lcmtypes)
     set(${LCM_LIB} ${LCM_NAME}_lcm PARENT_SCOPE)
 endfunction()

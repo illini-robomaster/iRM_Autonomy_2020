@@ -1,0 +1,18 @@
+package timing;
+
+struct tictoc_stats_t {
+  int32_t num_ticks;
+  int64_t min_time_ns;
+  int64_t max_time_ns;
+  int64_t total_time_ns;
+}
+
+struct tictoc_channel_t {
+  string name;
+  tictoc_stats_t tictoc_stats;
+}
+
+struct tictoc_t {
+  int32_t num_channels;
+  tictoc_channel_t tictoc_channels[num_channels];
+}
