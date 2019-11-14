@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.12)
-project(iRM CXX)
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
 set(CMAKE_CXX_STANDARD 14)  # use c++14
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra")
+set(CMAKE_CXX_COMPILER g++)
+
+project(iRM CXX)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 include(cmake/irm_cmake_utils.cmake)
 
