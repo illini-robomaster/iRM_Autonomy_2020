@@ -16,13 +16,13 @@ namespace lcm {
  */
 class LCMFileLogger {
  public:
-   /**
-    * @brief constructor
-    *
-    * @param filename   filename to store log product
-    * @param lcm_url    lcm url, see lcm documentation for more [Default to UDP]
-    */
-  LCMFileLogger(const std::string &filename, const std::string &lcm_url="");
+  /**
+   * @brief constructor
+   *
+   * @param filename   filename to store log product
+   * @param lcm_url    lcm url, see lcm documentation for more [Default to UDP]
+   */
+  LCMFileLogger(const std::string &filename, const std::string &lcm_url = "");
 
   /**
    * @brief destructor (explictly force to stop logging)
@@ -59,9 +59,8 @@ class LCMFileLogger {
    */
   void MessageHandler(const lcm::ReceiveBuffer *rbuf, const std::string &channel);
 
-  std::string filename_;
-
   lcm::LCM lcm_;
+  std::string filename_;
   lcm::Subscription *subscription_;
 
   std::future<void> stop_signal_;
