@@ -46,6 +46,8 @@ class WrappedClass {
 BOOST_PYTHON_MODULE(cc_example_class) {
   class_<WrappedClass>("WrappedClass")
     .def(init<int>())
+    .def(init<const std::string&>())
+    .def(init<int, const std::string&>())
     .def("get_value", &WrappedClass::get_value)
     .def("set_value", &WrappedClass::set_value)
     .add_property("name", &WrappedClass::get_name, &WrappedClass::set_name)
