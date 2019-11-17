@@ -1,0 +1,2 @@
+irm_add_python_module(cc_example_hello SOURCES example_hello.cc)
+irm_add_python_module(cc_example_class SOURCES example_class.cc)

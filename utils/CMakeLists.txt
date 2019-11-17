@@ -1,6 +1,7 @@
 add_subdirectory(timing)
 add_subdirectory(gtest_utils)
 add_subdirectory(lcm_utils)
+add_subdirectory(boost_python)
 
 irm_add_lcm_library(NAME example LIB example_lcm)
 

@@ -26,3 +26,12 @@ function(irm_add_lcm_library)
         ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/lcmtypes)
     set(${LCM_LIB} ${LCM_NAME}_lcm PARENT_SCOPE)
 endfunction()
+
+function(irm_add_python_module module_name)
+    cmake_parse_arguments(BPYTHON "" "" "SOURCES;DEPENDS" ${ARGN})
+    Python_add_library(${module_name} MODULE ${BPYTHON_SOURCES})
+    target_include_directories(${module_name} PRIVATE ${Boost_INCLUDE_DIRS})
+    target_link_libraries(${module_name} PRIVATE ${BOOST_PYTHON_LIB} ${BPYTHON_DEPENDS})
+    set_target_properties(${module_name} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/python_bindings)
+endfunction()
