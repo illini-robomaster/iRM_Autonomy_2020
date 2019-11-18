@@ -29,9 +29,10 @@ endfunction()
 #   the ${<lcm_lib>} will be set to the generated library from example.lcm structures
 function(irm_add_lcm_library lcm_name)
     cmake_parse_arguments(ARG "" "" "SOURCES" ${ARGN})
+    list(TRANSFORM ARG_SOURCES PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/lcmtypes/)
     lcm_wrap_types(CPP_HEADERS LCM_HEADERS CPP11
                    DESTINATION ${CMAKE_BINARY_DIR}/lcmtypes
-                   ${CMAKE_CURRENT_SOURCE_DIR}/lcmtypes/${ARG_SOURCES})
+                   ${ARG_SOURCES})
     lcm_add_library(liblcm_${lcm_name} CPP ${LCM_HEADERS})
     target_include_directories(liblcm_${lcm_name} INTERFACE
         ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/lcmtypes)
@@ -39,10 +40,10 @@ function(irm_add_lcm_library lcm_name)
 endfunction()
 
 ## irm_add_python_module(cc_<module_name> 
-#                        SOURCES <src1.cc> ... 
+#                        SOURCES <src1>.cc <src2>.cc ... 
 #                        [DEPENDS <dep1> <dep2> ...])
 #
-#   helper function for generating python modules from c++ bindings
+#   helper function for generating boost python modules
 #   all generated python modules will go to ${PROJECT_BINARY_DIR}/python_bindings
 function(irm_add_python_module module_name)
     cmake_parse_arguments(BPYTHON "" "" "SOURCES;DEPENDS" ${ARGN})
