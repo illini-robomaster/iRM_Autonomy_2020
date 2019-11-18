@@ -20,7 +20,6 @@ else ()
     add_definitions(-DNDEBUG)
 endif ()
 
-SET(Boost_USE_STATIC_LIBS ON)
 find_package(lcm REQUIRED)
 find_package(GTest REQUIRED)
 
