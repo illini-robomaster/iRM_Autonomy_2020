@@ -55,7 +55,7 @@ BOOST_PYTHON_MODULE(cc_example_class) {
     .def(init<int>())
     .def(init<const std::string&>())
     .def(init<int, const std::string&>())
-    // hold school getter / setter functions wrapper
+    // old school getter / setter functions wrapper
     .def("get_value", &WrappedClass::get_value)
     .def("set_value", &WrappedClass::set_value)
     // python class property wrapper
