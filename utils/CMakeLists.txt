@@ -3,7 +3,7 @@ add_subdirectory(gtest_utils)
 add_subdirectory(lcm_utils)
 add_subdirectory(boost_python)
 
-irm_add_lcm_library(example_lcm SOURCES example.lcm)
+irm_add_lcm_library(example_lcm SOURCES lcmtypes/example.lcm)
 
 irm_add_cc_test(timing_test DEPENDS gtest_utils timing)
 irm_add_cc_test(lcm_utils_test DEPENDS gtest_utils ${example_lcm} lcm_utils)

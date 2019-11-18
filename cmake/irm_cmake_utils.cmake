@@ -25,14 +25,12 @@ endfunction()
 ## irm_add_lcm_library(<lcm_lib> SOURCES <src1>.lcm <src2>.lcm ...)
 # 
 #   helper function for generate static librareis from lcmtypes
-#   will look into the "./lcmyptes" directory and search for <src1>.lcm <src2>.lcm ...
 #   the ${<lcm_lib>} will be set to the generated library from example.lcm structures
 function(irm_add_lcm_library lcm_name)
-    cmake_parse_arguments(ARG "" "" "SOURCES" ${ARGN})
-    list(TRANSFORM ARG_SOURCES PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/lcmtypes/)
+    cmake_parse_arguments(LCM "" "" "SOURCES" ${ARGN})
     lcm_wrap_types(CPP_HEADERS LCM_HEADERS CPP11
                    DESTINATION ${CMAKE_BINARY_DIR}/lcmtypes
-                   ${ARG_SOURCES})
+                   ${LCM_SOURCES})
     lcm_add_library(liblcm_${lcm_name} CPP ${LCM_HEADERS})
     target_include_directories(liblcm_${lcm_name} INTERFACE
         ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/lcmtypes)
