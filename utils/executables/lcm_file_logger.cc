@@ -1,3 +1,9 @@
+/**
+ * @file lcm_file_logger.cc
+ * @brief simple lcm logger that listens to all channels with default LCM url
+ * @author Alvin Sun
+ * @date 2019-11-17
+ */
 #include <iostream>
 
 #include "utils/lcm_utils/logging.h"
