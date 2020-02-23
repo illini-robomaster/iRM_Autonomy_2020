@@ -39,7 +39,7 @@ public:
     }
 
     void BenchmarkTest() {
-        int n = 200; // number of frames to get
+        int n = 100; // number of frames to get
         SimpleCVCam my_cam(4, 0);
         TicTocGlobalReset();
         TicToc tictoc_baseline("Standard get_img");
@@ -56,8 +56,8 @@ public:
         my_cam.start();
         // ours
         for (int i = 0; i < n; ++i) {
-            tictoc_ours.Tic();
             cv::Mat my_img;
+            tictoc_ours.Tic();
             my_cam.get_img(my_img);
             tictoc_ours.Toc();
             novel_mat_arr.push_back(my_img);

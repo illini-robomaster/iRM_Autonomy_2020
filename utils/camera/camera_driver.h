@@ -37,12 +37,15 @@ namespace camera {
         void get_img(cv::Mat &dst);
 
         /**
-         * @brief start the camera in a sperate thread
+         * @brief start the camera in a seperate thread
          *
          * @return none
          */
         void start();
-
+        
+        /**
+         * @brief terminates the (already started) separate thread
+         */
         void stop();
 
         /**
