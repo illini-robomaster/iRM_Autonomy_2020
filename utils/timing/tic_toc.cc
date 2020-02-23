@@ -53,6 +53,16 @@ std::string TicTocGlobalSummary() {
   return ss.str();
 }
 
+double TicTocStatsTime(std::string query) {
+  tictoc_t tictocs = global_tic_toc_bank.GetLCM();
+  // sort according to keys + find maximum channel name length
+  for (tictoc_channel_t &tictoc: tictocs.tictoc_channels) {
+    if (tictoc.name == query)
+      return ((TicTocStats)(tictoc.tictoc_stats)).TotalTime();
+  }
+  return -1; // not found
+}
+
 /***********************
  * --- TicTocStats --- *
  ***********************/

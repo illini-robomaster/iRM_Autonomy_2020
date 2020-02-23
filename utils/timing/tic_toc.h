@@ -36,7 +36,7 @@ class TicTocStats : public tictoc_stats_t {
 
   void Update(int64_t duration_ns);
   void Reset();
-  
+
   double TotalTime();
   double AverageTime();
   double MaxTime();
@@ -74,7 +74,7 @@ class TicTocBank {
    * @return tic toc lcm data struct
    */
   tictoc_t GetLCM();
- 
+
  private:
   std::unordered_map<std::string, TicTocStats> channel_map_;
   std::mutex lock_;
@@ -104,7 +104,7 @@ class TicToc {
     * @remark calls Tic() to start the timer when constructing
     */
   explicit TicToc(const std::string &name);
-  
+
   /**
    * @brief start the timer
    */
@@ -114,7 +114,7 @@ class TicToc {
    * @brief end the timer and upload duration to a global manager
    */
   void Toc();
- 
+
  private:
   std::chrono::time_point<std::chrono::steady_clock> start_;
   std::string name_;
@@ -170,5 +170,14 @@ void TicTocGlobalReset();
  *    | Channel Name | Count | Total Time | Min Time | Average Time | Max Time |
  */
 std::string TicTocGlobalSummary();
+
+/**
+ * @brief return the TOTAL time of a TicToc stats in the global TicToc bank
+ *
+ * @param query     name of desired TicToc
+ *
+ * @return          total time of corresponding TicToc
+ */
+double TicTocStatsTime(std::string query);
 
 } // namespace timing
