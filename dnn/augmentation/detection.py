@@ -110,7 +110,7 @@ class DetectionAugmentor(tf.Module):
 
     def get_clipped_scale_yx(self, input_hw, zoom):
         zoom = tf.minimum(zoom, self.max_zoom)
-        scale_yx_min = tf.cast(self.output_hw, tf.float32) / input_hw
+        scale_yx_min = self.output_hw / input_hw
         # aspect ratio squeeze / stretch
         aspect_ratio = tf.exp(tf.random.uniform([], self.log_min_aspect, -self.log_min_aspect))
         area_scale = zoom ** 2
@@ -156,6 +156,7 @@ class DetectionAugmentor(tf.Module):
 
     def get_random_affine(self, input_hw, bbox_yxyx_n4):
         if bbox_yxyx_n4.shape[0] and tf.random.uniform([]) < self.focus:
+            # sample a focus instance (the larger the size, the more likely to be sampled)
             bbox_hw_n2 = bbox_yxyx_n4[:, 2:] - bbox_yxyx_n4[:, :2]
             bbox_size_n = tf.reduce_prod(bbox_hw_n2, axis=-1)
             idx = tf.random.categorical(tf.math.log(bbox_size_n)[tf.newaxis], 1)[0, 0]
@@ -165,7 +166,7 @@ class DetectionAugmentor(tf.Module):
 
     def get_center_affine(self, input_hw):
         center_yx = tf.cast(input_hw, tf.float32) / 2
-        scale_yx = tf.cast(self.output_hw, tf.float32) / input_hw
+        scale_yx = self.output_hw / input_hw
         scale = tf.reduce_max(scale_yx)
         return center_yx, (scale, scale)
 
