@@ -155,7 +155,7 @@ class DetectionAugmentor(tf.Module):
         return center_yx, scale_yx
 
     def get_random_affine(self, input_hw, bbox_yxyx_n4):
-        if bbox_yxyx_n4.shape[0] and tf.random.uniform([]) < self.focus:
+        if tf.shape(bbox_yxyx_n4)[0] > 0 and tf.random.uniform([]) < self.focus:
             # sample a focus instance (the larger the size, the more likely to be sampled)
             bbox_hw_n2 = bbox_yxyx_n4[:, 2:] - bbox_yxyx_n4[:, :2]
             bbox_size_n = tf.reduce_prod(bbox_hw_n2, axis=-1)
@@ -212,7 +212,7 @@ class DetectionAugmentor(tf.Module):
         bbox_yxyx_n4 = self.get_bbox_yxyx_n4(data)
         label_n = self.get_label_n(data)
         # generate affine params
-        input_hw = tf.cast(img_hw3.shape[:-1], tf.float32)
+        input_hw = tf.cast(tf.shape(img_hw3)[:-1], tf.float32)
         if training:
             center_yx, scale_yx = self.get_random_affine(input_hw, bbox_yxyx_n4)
         else:
