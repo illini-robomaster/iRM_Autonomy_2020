@@ -2,6 +2,10 @@ import math
 import tensorflow as tf
 import tensorflow_addons as tfa
 
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+for physical_device in physical_devices:
+    tf.config.experimental.set_memory_growth(physical_device, True)
+
 def get_affine_coeffs(output_hw, center_yx, scale_yx):
     """generate affine coefficients for tfa.image.transform
 
@@ -56,7 +60,11 @@ class DetectionAugmentor(tf.Module):
             min_bbox_area=.5, 
             focus=0.5, 
             focus_jitter=50, 
-            focus_scale=(0.2, 1.)):
+            focus_scale=(0.2, 1.),
+            hue=0.1,
+            sat=(1,3),
+            constrast=(0.7, 1.0),
+            brightness=0.2):
         """ 
         Args:
             output_hw:  output image size (height, width)
@@ -87,6 +95,10 @@ class DetectionAugmentor(tf.Module):
         self.focus = focus
         self.focus_jitter = focus_jitter
         self.focus_log_scale = (math.log(focus_scale[0]), math.log(focus_scale[1]))
+        self.hue = hue
+        self.sat = sat
+        self.contrast = constrast
+        self.brightness = brightness
 
     def get_image_hw3(self, data):
         """ override this for customized input data format """
@@ -221,6 +233,10 @@ class DetectionAugmentor(tf.Module):
         # apply transformation
         img_hw3 = tfa.image.transform(img_hw3, affine_coeffs, 
             interpolation='BILINEAR', output_shape=tf.cast(self.output_hw, tf.int32))
+        img_hw3 = tf.image.random_saturation(img_hw3, self.sat[0], self.sat[1])
+        img_hw3 = tf.image.random_hue(img_hw3, self.hue)
+        img_hw3 = tf.image.random_contrast(img_hw3, self.contrast[0], self.contrast[1])
+        img_hw3 = tf.image.random_brightness(img_hw3, self.brightness)
         bbox_yxyx_n4, bbox_mask_n = self.affine_transform_bbox(affine_coeffs, bbox_yxyx_n4)
         label_n = label_n[bbox_mask_n]
         return self.format_output(img_hw3, bbox_yxyx_n4, label_n)
