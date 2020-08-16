@@ -105,3 +105,6 @@ venv.bak/
 
 # Cmake flags for autocompletion
 compile_commands.json
+
+# extra rules
+/.idea

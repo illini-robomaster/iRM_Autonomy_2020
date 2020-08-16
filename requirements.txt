@@ -1,0 +1,7 @@
+tensorflow>=2.1.0
+tensorflow-gpu>=2.1.0
+numpy>=1.19.1
+tqdm>=4.48.2
+opencv>=4.4.0
+
+-e .
