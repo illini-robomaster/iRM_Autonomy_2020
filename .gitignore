@@ -70,6 +70,7 @@ docs/_build/
 target/
 
 # Jupyter Notebook
+.ipynb
 .ipynb_checkpoints
 
 # pyenv
@@ -108,3 +109,5 @@ compile_commands.json
 
 # extra rules
 /.idea
+/dnn/data/DJI ROCO/*
+/dnn/data/DJI ROCO TFRecord/*
