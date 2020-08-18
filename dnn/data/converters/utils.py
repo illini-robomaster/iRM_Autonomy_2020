@@ -1,14 +1,6 @@
 import tensorflow as tf
 
 
-def activate_gpu():
-    """activate all your GPU for TensorFlow
-    """
-    physical_devices = tf.config.experimental.list_physical_devices('GPU')
-    for physical_device in physical_devices:
-        tf.config.experimental.set_memory_growth(physical_device, True)
-
-
 def int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
@@ -33,4 +25,4 @@ def float_list_feature(value):
     return tf.train.Feature(float_list=tf.train.FloatList(value=value))
 
 
-class_names = ['car', 'watcher', 'base', 'armor_red', 'armor_blue']
+CLASS_NAMES = ['car', 'watcher', 'base', 'armor_red', 'armor_blue']
