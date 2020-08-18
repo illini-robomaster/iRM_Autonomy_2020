@@ -27,17 +27,16 @@ def main(_argv):
         output_image_path = os.path.join(FLAGS.output, 'image/{}.png'.format(filename))
         output_annot_path = os.path.join(FLAGS.output, 'image_annotation/{}.xml'.format(filename))
         open(output_image_path, 'wb').write(image_target)
+
         doc = minidom.getDOMImplementation()
         dom = doc.createDocument(None, 'annotation', None)
         root_node = dom.documentElement
-
         filename_node = dom.createElement('filename')
         root_node.appendChild(filename_node)
         filename_text = dom.createTextNode(filename + '.png')
         filename_node.appendChild(filename_text)
 
         regions = json_file[image_id]['regions']
-
         for region in regions:
             cls = 'armor_' + region['region_attributes']['color']
             xmin = float(region['shape_attributes']['x'])
