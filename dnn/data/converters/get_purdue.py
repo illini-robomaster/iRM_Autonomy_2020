@@ -6,6 +6,7 @@ from absl import app, flags
 from absl.flags import FLAGS
 from tqdm import tqdm
 import os
+import time
 
 flags.DEFINE_string('input', '../Purdue Dataset/label.json',
                     'the path for input ROCO dataset (please unzip by yourself)')
@@ -24,8 +25,14 @@ def main(_argv):
                                 unit='pic',
                                 ncols=150),
                            json_file):
+        if m < 1647:
+            continue
         url = json_file[image_id]['filename']
-        r = requests.get(url)
+        try:
+            r = requests.get(url, timeout=5)
+        except requests.exceptions.RequestException:
+            time.sleep(10)
+            r = requests.get(url, timeout=30)
         image_target = r.content
         filename = url.split('/')[-1][:-4]
         output_image_path = os.path.join(FLAGS.output, 'image/{}.png'.format(filename))
