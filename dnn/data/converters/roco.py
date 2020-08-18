@@ -48,12 +48,12 @@ def convert_annot(annot_path):
                 if armor_color == 'grey':
                     continue
                 cls += '_' + armor_color
-            xmlbox = obj.find('bndbox')
+            bndbox = obj.find('bndbox')
             objt.append(CLASS_NAMES.index(cls))
-            box = [float(xmlbox.find('xmin').text),
-                   float(xmlbox.find('ymin').text),
-                   float(xmlbox.find('xmax').text),
-                   float(xmlbox.find('ymax').text)]
+            box = [float(bndbox.find('xmin').text),
+                   float(bndbox.find('ymin').text),
+                   float(bndbox.find('xmax').text),
+                   float(bndbox.find('ymax').text)]
             bbox.append(box)
     objt = tf.io.serialize_tensor(tf.convert_to_tensor(objt))
     bbox = tf.io.serialize_tensor(tf.convert_to_tensor(bbox))
@@ -66,15 +66,15 @@ def main(_argv):
         os.mkdir(FLAGS.output)
     folder_ids = os.listdir(FLAGS.input)
     for n, folder_id in enumerate(folder_ids):
-        filename = os.path.join(FLAGS.output, 'RM_training_{}.tfrecords'.format(n + 1))
-        if os.path.exists(filename):
-            os.remove(filename)
-        writer = tf.io.TFRecordWriter(filename)
+        output_path = os.path.join(FLAGS.output, 'ROCO_{}.tfrecords'.format(n + 1))
+        if os.path.exists(output_path):
+            os.remove(output_path)
+        writer = tf.io.TFRecordWriter(output_path)
         image_ids = os.listdir(os.path.join(FLAGS.input, folder_id, 'image'))
         annot_ids = os.listdir(os.path.join(FLAGS.input, folder_id, 'image_annotation'))
         pack_ids = np.stack([image_ids, annot_ids], axis=1)
         num_image = len(pack_ids)
-        for m, (image_id, annot_id) in zip(tqdm(range(num_image),
+        for _, (image_id, annot_id) in zip(tqdm(range(num_image),
                                                 desc='The {} training set: '.format(n + 1),
                                                 unit='pic',
                                                 ncols=150),
