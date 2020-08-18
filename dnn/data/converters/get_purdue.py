@@ -15,6 +15,10 @@ flags.DEFINE_string('output', '../Purdue Dataset',
 
 def main(_argv):
     json_file = json.loads(open(FLAGS.input, 'rb').read())['_via_img_metadata']
+    if not os.path.exists(os.path.join(FLAGS.output, 'image')):
+        os.mkdir(os.path.join(FLAGS.output, 'image'))
+    if not os.path.exists(os.path.join(FLAGS.output, 'image_annotation')):
+        os.mkdir(os.path.join(FLAGS.output, 'image_annotation'))
     for m, image_id in zip(tqdm(range(len(json_file)),
                                 desc='Getting Purdue Dataset: ',
                                 unit='pic',
@@ -26,6 +30,8 @@ def main(_argv):
         filename = url.split('/')[-1][:-4]
         output_image_path = os.path.join(FLAGS.output, 'image/{}.png'.format(filename))
         output_annot_path = os.path.join(FLAGS.output, 'image_annotation/{}.xml'.format(filename))
+        if os.path.exists(output_image_path):
+            os.remove(output_image_path)
         open(output_image_path, 'wb').write(image_target)
 
         doc = minidom.getDOMImplementation()
@@ -70,6 +76,8 @@ def main(_argv):
             xmax_node.appendChild(xmax_text)
             ymax_node.appendChild(ymax_text)
 
+        if os.path.exists(output_annot_path):
+            os.remove(output_annot_path)
         output = open(output_annot_path, 'w')
         dom.writexml(output, addindent='\t', newl='\n', encoding='utf-8')
         output.close()
