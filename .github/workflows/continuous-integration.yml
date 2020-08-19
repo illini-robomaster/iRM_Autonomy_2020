@@ -8,25 +8,29 @@ on:
 
 jobs:
   # build on ubuntu
-  build-ubuntu:
+  build-test-ubuntu:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: create build
-      run: mkdir build && cd build
-    - name: cmake
-      run: cmake -DCMAKE_BUILD_TYPE=Release ..
-    - name: make
-      run: make
+      run: mkdir build
+    - name: cmake gen
+      run: cmake -Bbuild
+    - name: cmake build
+      run: cmake -DCMAKE_BUILD_TYPE=Debug --build build --target all
+    - name: cmake test
+      run: cmake --build build --target test
 
   # build on macos
-  build-mac:
+  build-test-mac:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
     - name: create build
-      run: mkdir build && cd build
-    - name: cmake
-      run: cmake -DCMAKE_BUILD_TYPE=Release ..
-    - name: make
-      run: make
+      run: mkdir build
+    - name: cmake gen
+      run: cmake -Bbuild
+    - name: cmake build
+      run: cmake -DCMAKE_BUILD_TYPE=Debug --build build --target all
+    - name: cmake test
+      run: cmake --build build --target test
