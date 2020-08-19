@@ -15,7 +15,8 @@ flags.DEFINE_string('output', '../Purdue Dataset',
 
 
 def main(_argv):
-    json_file = json.loads(open(FLAGS.input, 'rb').read())['_via_img_metadata']
+    with open(FLAGS.input, 'rb') as input:
+        json_file = json.loads(input.read())['_via_img_metadata']
     if not os.path.exists(os.path.join(FLAGS.output, 'image')):
         os.mkdir(os.path.join(FLAGS.output, 'image'))
     if not os.path.exists(os.path.join(FLAGS.output, 'image_annotation')):
@@ -39,7 +40,8 @@ def main(_argv):
         output_annot_path = os.path.join(FLAGS.output, 'image_annotation/{}.xml'.format(filename))
         if os.path.exists(output_image_path):
             os.remove(output_image_path)
-        open(output_image_path, 'wb').write(image_target)
+        with open(output_image_path, 'wb') as output:
+            output.write(image_target)
 
         doc = minidom.getDOMImplementation()
         dom = doc.createDocument(None, 'annotation', None)
@@ -85,9 +87,8 @@ def main(_argv):
 
         if os.path.exists(output_annot_path):
             os.remove(output_annot_path)
-        output = open(output_annot_path, 'w')
-        dom.writexml(output, addindent='\t', newl='\n', encoding='utf-8')
-        output.close()
+        with open(output_annot_path, 'w') as output:
+            dom.writexml(output, addindent='\t', newl='\n', encoding='utf-8')
 
 
 if __name__ == '__main__':
