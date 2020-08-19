@@ -8,10 +8,8 @@ from tqdm import tqdm
 import os
 import time
 
-flags.DEFINE_string('input', '../Purdue Dataset/label.json',
-                    'the path for input ROCO dataset (please unzip by yourself)')
-flags.DEFINE_string('output', '../Purdue Dataset',
-                    'the path for input ROCO dataset (please unzip by yourself)')
+flags.DEFINE_string('input', None, 'the path for input ROCO dataset (please unzip by yourself)')
+flags.DEFINE_string('output', None, 'the path for input ROCO dataset (please unzip by yourself)')
 
 
 def main(_argv):
@@ -26,8 +24,8 @@ def main(_argv):
                                 unit='pic',
                                 ncols=150),
                            json_file):
-        if m < 0:  # to resume download process, set 0 to be your latest download picture index
-            continue
+        # if m < 0:  # to resume download process, set 0 to be your latest download picture index
+        #     continue
         url = json_file[image_id]['filename']
         try:
             r = requests.get(url, timeout=10)

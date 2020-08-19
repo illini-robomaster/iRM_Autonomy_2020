@@ -14,8 +14,8 @@ from dnn.data.converters.utils import (
 )
 from dnn.utils.mem import tf_set_memory_growth
 
-flags.DEFINE_string('input', '../DJI ROCO', 'the path for input ROCO dataset (please unzip by yourself)')
-flags.DEFINE_string('output', '../DJI ROCO TFRecord', 'the path for output TFRecord file(s)')
+flags.DEFINE_string('input', None, 'the path for input ROCO dataset (please unzip by yourself)')
+flags.DEFINE_string('output', None, 'the path for output TFRecord file(s)')
 
 
 def convert_image(image_path):
