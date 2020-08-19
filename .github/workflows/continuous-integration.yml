@@ -20,7 +20,7 @@ jobs:
       run: make
 
   # build on macos
-  build-ubuntu:
+  build-mac:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
