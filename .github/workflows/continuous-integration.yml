@@ -2,7 +2,7 @@ name: IRM Autonomy CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, alvin/ci ]
   pull_request:
     branches: [ master ]
 
