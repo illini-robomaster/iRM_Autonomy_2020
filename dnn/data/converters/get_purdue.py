@@ -8,8 +8,8 @@ from tqdm import tqdm
 import os
 import time
 
-flags.DEFINE_string('input', None, 'the path for input ROCO dataset (please unzip by yourself)')
-flags.DEFINE_string('output', None, 'the path for input ROCO dataset (please unzip by yourself)')
+flags.DEFINE_string('input', None, 'the path for input Purdue dataset json file')
+flags.DEFINE_string('output', None, 'the path for output TFRecord file(s)')
 
 
 def main(_argv):
