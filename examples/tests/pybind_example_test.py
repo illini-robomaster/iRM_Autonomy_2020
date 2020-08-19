@@ -3,7 +3,7 @@ import unittest
 import cc_example_class
 import cc_example_hello
 
-class BoostPythonExampleTest(unittest.TestCase):
+class PybindExampleTest(unittest.TestCase):
 
     def test_cc_example_hello(self):
         self.assertEqual(cc_example_hello.greet(), 'Hello World!')
