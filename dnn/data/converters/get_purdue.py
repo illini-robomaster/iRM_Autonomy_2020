@@ -29,7 +29,7 @@ def main(_argv):
         url = json_file[image_id]['filename']
         try:
             r = requests.get(url, timeout=10)
-        except requests.exceptions.RequestException:
+        except (requests.exceptions.RequestException, requests.exceptions.ConnectionError):
             time.sleep(10)
             r = requests.get(url, timeout=30)
         image_target = r.content
