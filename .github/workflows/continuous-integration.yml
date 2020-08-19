@@ -15,9 +15,9 @@ jobs:
     - name: create build
       run: mkdir build
     - name: cmake gen
-      run: cmake -Bbuild
+      run: cmake -DCMAKE_BUILD_TYPE=Debug -Bbuild
     - name: cmake build
-      run: cmake -DCMAKE_BUILD_TYPE=Debug --build build --target all
+      run: cmake --build build --target all
     - name: cmake test
       run: cmake --build build --target test
 
@@ -29,8 +29,8 @@ jobs:
     - name: create build
       run: mkdir build
     - name: cmake gen
-      run: cmake -Bbuild
+      run: cmake -DCMAKE_BUILD_TYPE=Debug -Bbuild
     - name: cmake build
-      run: cmake -DCMAKE_BUILD_TYPE=Debug --build build --target all
+      run: cmake --build build --target all
     - name: cmake test
       run: cmake --build build --target test
