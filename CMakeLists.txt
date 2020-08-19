@@ -22,8 +22,10 @@ endif ()
 
 find_package(lcm REQUIRED)
 find_package(GTest REQUIRED)
+find_package(OpenCV REQUIRED)
 
 include(${LCM_USE_FILE}) # lcm related cmake helper functions
+include_directories(${OpenCV_INLUCDE_DIRS}) # OpenCV headers
 
 include_directories(.)
 
