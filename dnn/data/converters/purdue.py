@@ -82,7 +82,4 @@ def main(_argv):
 
 
 if __name__ == '__main__':
-    try:
-        app.run(main)
-    except SystemExit:
-        pass
+    app.run(main)

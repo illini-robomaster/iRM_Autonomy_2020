@@ -109,6 +109,3 @@ compile_commands.json
 
 # extra rules
 /.idea
-/dnn/data/*
-!/dnn/data/converters
-!__init__.py
