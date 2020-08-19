@@ -4,8 +4,6 @@ iRM 2020 Software Development Repo
 ## Dependency
 * Boost
 * CMake >= 3.12
-* GTest
-* [lcm](http://lcm-proj.github.io/)
 
 ## Build Steps
 ```
