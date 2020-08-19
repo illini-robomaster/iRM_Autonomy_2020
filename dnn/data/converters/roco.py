@@ -76,7 +76,7 @@ def main(_argv):
             pack_ids = np.stack([image_ids, annot_ids], axis=1)
             num_image = len(pack_ids)
             for _, (image_id, annot_id) in zip(tqdm(range(num_image),
-                                                    desc='The {} training set: '.format(n + 1),
+                                                    desc='Processing the {} ROCO dataset: '.format(n + 1),
                                                     unit='pic',
                                                     ncols=150),
                                                pack_ids):
