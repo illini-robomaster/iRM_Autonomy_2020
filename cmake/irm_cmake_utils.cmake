@@ -1,3 +1,6 @@
+# directory that contains the generated python bindings
+set(IRM_PYTHON_MODULE_DIR ${PROJECT_BINARY_DIR}/python_bindings)
+
 ## irm_add_cc_test(NAME <test_name> [DEPENDS <dep1> <dep2> ...])
 #
 #   helper function for adding cpp tests
@@ -16,7 +19,7 @@ endfunction()
 #   will look into the "./tests" directory and search for <test_name>.py
 function(irm_add_python_test test_name)
     add_test(NAME ${test_name}
-             COMMAND ${Python_EXECUTABLE} ${test_name}.py
+             COMMAND ${Python3_EXECUTABLE} ${test_name}.py
              WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
     set_tests_properties(${test_name} PROPERTIES ENVIRONMENT
         "PYTHONPATH=${IRM_PYTHON_MODULE_DIR}:${PROJECT_SOURCE_DIR}:$ENV{PYTHONPATH}")
@@ -41,13 +44,12 @@ endfunction()
 #                        SOURCES <src1>.cc <src2>.cc ... 
 #                        [DEPENDS <dep1> <dep2> ...])
 #
-#   helper function for generating boost python modules
+#   helper function for generating pybind modules
 #   all generated python modules will go to ${PROJECT_BINARY_DIR}/python_bindings
 function(irm_add_python_module module_name)
-    cmake_parse_arguments(BPYTHON "" "" "SOURCES;DEPENDS" ${ARGN})
-    Python_add_library(${module_name} MODULE ${BPYTHON_SOURCES})
-    target_include_directories(${module_name} PRIVATE ${Boost_INCLUDE_DIRS})
-    target_link_libraries(${module_name} PRIVATE ${BOOST_PYTHON_LIB} ${BPYTHON_DEPENDS})
+    cmake_parse_arguments(PYBIND "" "" "SOURCES;DEPENDS" ${ARGN})
+    pybind11_add_module(${module_name} ${PYBIND_SOURCES})
+    target_link_libraries(${module_name} PRIVATE ${PYBIND_DEPENDS})
     set_target_properties(${module_name} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${IRM_PYTHON_MODULE_DIR})
 endfunction()

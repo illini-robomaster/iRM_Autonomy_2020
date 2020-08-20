@@ -1,20 +1,20 @@
 /**
  * @file example_hello.cc
  * @brief example usage of using boost python to wrap generic C++ functions
- * @author Alvin Sun 
+ * @author Alvin Sun
  * @date 2019-11-17
  */
 
 #include <string>
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
-using namespace boost::python;
+namespace py = pybind11;
 
 const std::string greet() {
   return "Hello World!";
 }
 
-BOOST_PYTHON_MODULE(cc_example_hello) {
-  def("greet", greet);
+PYBIND11_MODULE(cc_example_hello, m) {
+  m.def("greet", greet);
 }

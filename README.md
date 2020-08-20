@@ -2,7 +2,6 @@
 iRM 2020 Software Development Repo
 
 ## Dependency
-* Boost
 * CMake >= 3.12
 
 ## Build Steps

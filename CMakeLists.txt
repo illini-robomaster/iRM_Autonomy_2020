@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 14)  # use c++14
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra") # low warning tolerance
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG") # add debug flag for debug build
 
-include(cmake/find_boost_python.cmake)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include(cmake/irm_cmake_utils.cmake)
 
 include_directories(.)
@@ -17,3 +17,4 @@ include(GoogleTest)
 
 add_subdirectory(third_party)
 add_subdirectory(utils)
+add_subdirectory(examples)

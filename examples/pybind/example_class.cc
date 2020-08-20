@@ -6,10 +6,11 @@
  */
 #include <string>
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 
+namespace py = pybind11;
 using namespace std;
-using namespace boost::python;
 
 class WrappedClass {
  public:
@@ -18,7 +19,7 @@ class WrappedClass {
   WrappedClass(const std::string& name): value_(0), name_(name) {}
   WrappedClass(int value, const std::string& name) : value_(value), name_(name) {}
 
-  int get_value() {
+  int get_value() const {
     return value_;
   }
 
@@ -26,7 +27,7 @@ class WrappedClass {
     value_ = value;
   }
 
-  const std::string get_name() {
+  const std::string get_name() const {
     return name_;
   }
 
@@ -40,7 +41,7 @@ class WrappedClass {
     return *this;
   }
 
-  WrappedClass operator+(const WrappedClass &other) {
+  WrappedClass operator+(const WrappedClass &other) const {
     return WrappedClass(value_ + other.value_, name_ + other.name_);
   }
 
@@ -49,18 +50,19 @@ class WrappedClass {
   std::string name_;
 };
 
-BOOST_PYTHON_MODULE(cc_example_class) {
-  class_<WrappedClass>("WrappedClass")
+PYBIND11_MODULE(cc_example_class, m) {
+  py::class_<WrappedClass>(m, "WrappedClass")
     // you can overload different class constructors
-    .def(init<int>())
-    .def(init<const std::string&>())
-    .def(init<int, const std::string&>())
+    .def(py::init<>())
+    .def(py::init<int>())
+    .def(py::init<const std::string&>())
+    .def(py::init<int, const std::string&>())
     // old school getter / setter functions wrapper
     .def("get_value", &WrappedClass::get_value)
     .def("set_value", &WrappedClass::set_value)
     // python class property wrapper
-    .add_property("name", &WrappedClass::get_name, &WrappedClass::set_name)
+    .def_property("name", &WrappedClass::get_name, &WrappedClass::set_name)
     // operator overloading
-    .def(self + self)
-    .def(self += self);
+    .def(py::self + py::self)
+    .def(py::self += py::self);
 }
