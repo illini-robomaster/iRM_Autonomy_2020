@@ -1,4 +1,4 @@
-name: IRM Autonomy CI
+name: iRM Autonomy CI
 
 on:
   push:
@@ -18,8 +18,28 @@ jobs:
       run: cmake -DCMAKE_BUILD_TYPE=Debug ..
       working-directory: build
     - name: build
-      run: make
+      run: make -j
       working-directory: build
+    - name: test
+      run: make test
+      working-directory: build
+  # build on macos
+  build-test-mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: create build
+      run: mkdir build
+    - name: cmake
+      run: cmake -DCMAKE_BUILD_TYPE=Debug ..
+      working-directory: build
+    - name: build
+      run: make -j
+      working-directory: build
+    - name: turn off firewall
+      run: |
+        sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
+        sudo /usr/libexec/ApplicationFirewall/socketfilterfw -k
     - name: test
       run: make test
       working-directory: build
