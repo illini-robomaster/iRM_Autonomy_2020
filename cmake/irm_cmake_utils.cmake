@@ -1,5 +1,9 @@
 # directory that contains the generated python bindings
 set(IRM_PYTHON_MODULE_DIR ${PROJECT_BINARY_DIR}/python_bindings)
+# detect Windows Subsystem of Linux
+if (CMAKE_SYSTEM MATCHES "Linux" AND CMAKE_SYSTEM MATCHES "Microsoft")
+    set(WSL TRUE)
+endif ()
 
 ## irm_add_cc_test(NAME <test_name> [DEPENDS <dep1> <dep2> ...])
 #
