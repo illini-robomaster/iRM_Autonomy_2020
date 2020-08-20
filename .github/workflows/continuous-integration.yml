@@ -24,7 +24,7 @@ jobs:
       run: make test
       working-directory: build
   # build on macos
-  build-test-ubuntu:
+  build-test-mac:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
