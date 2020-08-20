@@ -24,6 +24,7 @@ jobs:
   # build on macos
   build-test-mac:
     runs-on: macos-latest
+    needs: build-test-ubuntu
     steps:
     - uses: actions/checkout@v2
     - name: create build
