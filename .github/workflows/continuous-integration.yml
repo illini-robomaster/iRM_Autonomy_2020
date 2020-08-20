@@ -18,7 +18,7 @@ jobs:
       run: cmake -DCMAKE_BUILD_TYPE=Debug ..
       working-directory: build
     - name: build
-      run: make
+      run: make -j
       working-directory: build
     - name: test
       run: make test
@@ -34,13 +34,12 @@ jobs:
       run: cmake -DCMAKE_BUILD_TYPE=Debug ..
       working-directory: build
     - name: build
-      run: make
+      run: make -j
       working-directory: build
     - name: turn off firewall
       run: |
-        sudo defaults write /Library/Preferences/com.apple.alf globalstate -int 0
         sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
         sudo /usr/libexec/ApplicationFirewall/socketfilterfw -k
     - name: test
-      run: ./utils/tests/lcm_utils_test
+      run: make test
       working-directory: build
