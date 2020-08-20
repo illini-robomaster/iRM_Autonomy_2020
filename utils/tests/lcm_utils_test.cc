@@ -9,7 +9,7 @@
 #include "utils/gtest_utils/test_base.h"
 #include "utils/lcm_utils/logging.h"
 
-#define TEMP_LOG_PRODUCT "lcm_utils_test.lcmlog"
+#define TEMP_LOG_PRODUCT "/tmp/lcm_utils_test.lcmlog"
 
 class LCMUtilsTest : public TestBase {
  public:
