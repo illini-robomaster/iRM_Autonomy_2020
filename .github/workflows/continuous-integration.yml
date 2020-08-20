@@ -39,8 +39,8 @@ jobs:
     - name: turn off firewall
       run: |
         sudo defaults write /Library/Preferences/com.apple.alf globalstate -int 0
-        sudo defaults write /Library/Preferences/com.apple.alf allowsignedenabled -int 1
-        sudo defaults write /Library/Preferences/com.apple.alf stealthenabled -int 1
+        sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
+        sudo /usr/libexec/ApplicationFirewall/socketfilterfw -k
     - name: test
       run: ./utils/tests/lcm_utils_test
       working-directory: build
