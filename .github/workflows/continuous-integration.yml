@@ -36,6 +36,11 @@ jobs:
     - name: build
       run: make
       working-directory: build
+    - name: turn off firewall
+      run: |
+        sudo defaults write /Library/Preferences/com.apple.alf globalstate -int 0
+        sudo launchctl unload /System/Library/LaunchDaemons/com.apple.alf.agent.plist
+        sudo launchctl load /System/Library/LaunchDaemons/com.apple.alf.agent.plist
     - name: test
       run: ./utils/tests/lcm_utils_test
       working-directory: build
