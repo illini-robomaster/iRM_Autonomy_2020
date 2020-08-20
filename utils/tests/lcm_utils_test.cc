@@ -9,7 +9,7 @@
 #include "utils/gtest_utils/test_base.h"
 #include "utils/lcm_utils/logging.h"
 
-#define TEMP_LOG_PRODUCT "/tmp/lcm_utils_test.lcmlog"
+#define TEMP_LOG_PRODUCT "lcm_utils_test.lcmlog"
 
 class LCMUtilsTest : public TestBase {
  public:
@@ -19,7 +19,7 @@ class LCMUtilsTest : public TestBase {
   void LCMFileLoggerTest() {
     lcm::LCM lcm_backend;
     lcm::LCMFileLogger logger(TEMP_LOG_PRODUCT);
-    // test: consecutive start should fail 
+    // test: consecutive start should fail
     EXPECT_EQ(logger.Start(), 0);
     EXPECT_EQ(logger.Start(), -1);
     EXPECT_EQ(logger.Start(), -1);
