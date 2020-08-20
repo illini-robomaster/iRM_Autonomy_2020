@@ -39,8 +39,8 @@ jobs:
     - name: turn off firewall
       run: |
         sudo defaults write /Library/Preferences/com.apple.alf globalstate -int 0
-        sudo launchctl unload /System/Library/LaunchDaemons/com.apple.alf.agent.plist
-        sudo launchctl load /System/Library/LaunchDaemons/com.apple.alf.agent.plist
+        sudo defaults write /Library/Preferences/com.apple.alf allowsignedenabled -int 1
+        sudo defaults write /Library/Preferences/com.apple.alf stealthenabled -int 1
     - name: test
       run: ./utils/tests/lcm_utils_test
       working-directory: build
