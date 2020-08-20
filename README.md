@@ -2,6 +2,7 @@
 iRM 2020 Software Development Repo
 
 ## Dependency
+* Glib2 (for LCM)
 * CMake >= 3.12
 
 ## Build Steps
