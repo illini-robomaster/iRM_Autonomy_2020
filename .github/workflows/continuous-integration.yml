@@ -15,17 +15,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
+    - name: get pip cache directory
+      id: pip-cache-dir
+      run: echo "::set-output name=dir::$(pip cache dir)"
     - name: cache pip
       id: cache-pip
       uses: actions/cache@v2
       with:
-        path: ~/.pip
+        path: ${{ pip-cache-dir.outputs.dir }}
         key: ${{ runner.os }}-pip
     - name: pip
       run: |
-        mkdir -p ~/.pip # create cache dir if not exist
-        sudo -H pip3 install pip setuptools --upgrade --cache-dir=~/.pip # use latest pip
-        sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver --cache-dir=~/.pip
+        sudo -H pip3 install pip setuptools --upgrade # use latest pip
+        sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver
     - name: create build
       run: mkdir build
     - name: cmake
