@@ -15,22 +15,27 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
+    - name: setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
     - name: get pip cache directory
       id: pip-cache-dir
       run: |
-        sudo -H pip3 install pip -U # use latest pip
+        pip3 install pip -U # use latest pip
         echo "::set-output name=dir::$(pip3 cache dir)"
     - name: cache pip
-      id: cache-pip
       uses: actions/cache@v2
       with:
         path: ${{ steps.pip-cache-dir.outputs.dir }}
-        key: ${{ runner.os }}-pip
+        key: ${{ runner.os }}-pip-${{ hasFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
     - name: pip install
       run: |
         echo "caching pip in ${{ steps.pip-cache-dir.outputs.dir }}"
-        sudo -H pip3 install setuptools --upgrade
-        sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver
+        pip3 install -r requirements.txt --use-feature=2020-resolver
     - name: create build
       run: mkdir build
     - name: cmake
