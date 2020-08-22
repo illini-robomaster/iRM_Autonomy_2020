@@ -22,7 +22,9 @@ jobs:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip
     - name: pip
-      run: sudo -H pip3 install -r requirments.txt --use-feature=2020-resolver
+      run: |
+        sudo -H pip3 install pip --upgrade # use latest pip
+        sudo -H pip3 install -r requirments.txt --use-feature=2020-resolver
     - name: create build
       run: mkdir build
     - name: cmake
