@@ -20,21 +20,19 @@ jobs:
       with:
         python-version: '3.x'
     - name: get pip cache directory
-      id: pip-cache-dir
+      id: pip-cache
       run: |
-        pip3 install pip -U # use latest pip
         echo "::set-output name=dir::$(pip3 cache dir)"
     - name: cache pip
       uses: actions/cache@v2
       with:
-        path: ${{ steps.pip-cache-dir.outputs.dir }}
+        path: ${{ steps.pip-cache.outputs.dir }}
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-          ${{ runner.os }}-
     - name: pip install
       run: |
-        echo "caching pip in ${{ steps.pip-cache-dir.outputs.dir }}"
+        echo "caching pip in ${{ steps.pip-cache.outputs.dir }}"
         pip3 install -r requirements.txt --use-feature=2020-resolver
     - name: create build
       run: mkdir build
