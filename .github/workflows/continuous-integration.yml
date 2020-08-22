@@ -19,12 +19,12 @@ jobs:
       id: cache-pip
       uses: actions/cache@v2
       with:
-        path: ~/.cache/pip
+        path: ~/.pip
         key: ${{ runner.os }}-pip
     - name: pip
       run: |
-        sudo -H pip3 install pip setuptools --upgrade # use latest pip
-        sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver
+        sudo -H pip3 install pip setuptools --upgrade --cache-dir=~/.pip # use latest pip
+        sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver --cache-dir=~/.pip
     - name: create build
       run: mkdir build
     - name: cmake
