@@ -28,6 +28,7 @@ jobs:
         key: ${{ runner.os }}-pip
     - name: pip install
       run: |
+        echo "caching pip in ${{ steps.pip-cache-dir.outputs.dir }}"
         sudo -H pip3 install setuptools --upgrade
         sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver
     - name: create build
