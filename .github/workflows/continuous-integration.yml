@@ -23,6 +23,7 @@ jobs:
         key: ${{ runner.os }}-pip
     - name: pip
       run: |
+        mkdir -p ~/.pip # create cache dir if not exist
         sudo -H pip3 install pip setuptools --upgrade --cache-dir=~/.pip # use latest pip
         sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver --cache-dir=~/.pip
     - name: create build
