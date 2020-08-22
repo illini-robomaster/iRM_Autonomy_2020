@@ -24,7 +24,7 @@ jobs:
     - name: pip
       run: |
         sudo -H pip3 install pip --upgrade # use latest pip
-        sudo -H pip3 install -r requirments.txt --use-feature=2020-resolver
+        sudo -H pip3 install -r requirements.txt --use-feature=2020-resolver
     - name: create build
       run: mkdir build
     - name: cmake
