@@ -58,19 +58,19 @@ def generate_data_split(samples, class_names, mode='train'):
                         continue
                     class_id = CLASS_NAMES.index(class_name)
                     class_n.append(class_id)
-                    x, y, w, h = [float(val) for val in annotation.split(' ')[1:]]
-                    x *= img.width
-                    y *= img.height
+                    x_center, y_center, w, h = [float(val) for val in annotation.split(' ')[1:]]
+                    x = (x_center - w / 2) * img.width
+                    y = (y_center - h / 2) * img.height
                     w *= img.width
                     h *= img.height
                     bbox_yxyx_n4.append([y, x, y + h, x + w])
                 # to tf example
-                class_n_str = tf.io.serialize_tensor(tf.stack(class_n)).numpy()
-                bbox_yxyx_n4_str = tf.io.serialize_tensor(tf.stack(bbox_yxyx_n4)).numpy()
+                class_n = tf.convert_to_tensor(class_n, dtype=tf.int32)
+                bbox_yxyx_n4 = tf.convert_to_tensor(bbox_yxyx_n4, dtype=tf.float32)
                 example = tf.train.Example(features=tf.train.Features(feature={
                     'image': bytes_feature(img_bin),
-                    'class_n': bytes_feature(class_n_str),
-                    'bbox_yxyx_n4': bytes_feature(bbox_yxyx_n4_str)
+                    'class_n': bytes_feature(tf.io.serialize_tensor(class_n).numpy()),
+                    'bbox_yxyx_n4': bytes_feature(tf.io.serialize_tensor(bbox_yxyx_n4).numpy())
                 }))
                 writer.write(example.SerializeToString())
 
