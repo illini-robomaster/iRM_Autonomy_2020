@@ -1,12 +1,20 @@
+"""
+This is a converter for the Purdue Dataset enhanced by iRM
+Input raw data can be downloaded from the following URL:
+
+https://drive.google.com/file/d/1MarfJDgRdSPM_OvfqyZSYlDXhG7cb4Wq/view?usp=sharing
+"""
+
+import json
+import io
+import os
+import random
+import tensorflow as tf
+
 from absl import app, flags
 from absl.flags import FLAGS
-
-import os
-import xml.etree.ElementTree as xmlTree
-
-import numpy as np
-import tensorflow as tf
-from tqdm import tqdm
+from PIL import Image
+from tqdm import trange, tqdm
 
 from dnn.data.converters.utils import (
     bytes_feature,
@@ -14,72 +22,71 @@ from dnn.data.converters.utils import (
 )
 from dnn.utils.mem import tf_set_memory_growth
 
-flags.DEFINE_string('input', None, 'the path for input Purdue dataset (please run get_purdue.py first by yourself)')
-flags.DEFINE_string('output', None, 'the path for output TFRecord file(s)')
+flags.DEFINE_string('input', None, 'input directory to purdue dataset iRM version')
+flags.DEFINE_string('output', None, 'output directory to store TFRecord file(s)')
+flags.DEFINE_integer('shard_size', 1000, 'number of samples per TFRecord shard')
+flags.DEFINE_float('split', .9, 'train / validation split, e.g. .9 for .9 train and .1 validation',
+                    lower_bound=0., upper_bound=1.)
 
 
-def convert_image(image_path):
-    """open an image from file path and return the image as a binary string
-
-    Args:
-        image_path:  the file path for your image
-    """
-    with open(image_path, 'rb') as image:
-        image_string = image.read()
-    return image_string
-
-
-def convert_annot(annot_path):
-    """open a xml file from file path and return the converted annotation
-
-    Args:
-        annot_path:  the file path for your xml annotation file
-    """
-    with open(annot_path, 'r') as xml_file:
-        tree = xmlTree.parse(xml_file)
-    root = tree.getroot()
-    objt = []
-    bbox = []
-    for _, obj in enumerate(root.iter('object')):
-        cls = obj.find('name').text
-        bndbox = obj.find('bndbox')
-        objt.append(CLASS_NAMES.index(cls))
-        box = [float(bndbox.find('xmin').text),
-               float(bndbox.find('ymin').text),
-               float(bndbox.find('xmax').text),
-               float(bndbox.find('ymax').text)]
-        bbox.append(box)
-    objt = tf.io.serialize_tensor(tf.convert_to_tensor(objt))
-    bbox = tf.io.serialize_tensor(tf.convert_to_tensor(bbox))
-    return objt.numpy(), bbox.numpy()
-
+def generate_data_split(samples, class_names, mode='train'):
+    num_shards = len(samples) // FLAGS.shard_size
+    output_dir = os.path.join(FLAGS.output, mode)
+    os.makedirs(output_dir, exist_ok=True)
+    for shard_id in trange(num_shards, desc=f'{mode} shards'):
+        shard_path = os.path.join(output_dir, f'shard-{shard_id}.tfrecord')
+        with tf.io.TFRecordWriter(shard_path) as writer:
+            for sample in tqdm(samples[shard_id*FLAGS.shard_size:(shard_id+1)*FLAGS.shard_size],
+                               desc=f'shard {shard_id}', position=1, leave=False):
+                # get image
+                img_path = os.path.join(FLAGS.input, 'data', f'{sample}.png')
+                img = Image.open(img_path)
+                with open(img_path, 'rb') as f:
+                    img_bin = f.read()
+                # get annotation
+                anno_path = os.path.join(FLAGS.input, 'annotation', f'{sample}.txt')
+                with open(anno_path, 'r') as f:
+                    annotations = f.read().split('\n')
+                # parse annotation
+                class_n = []
+                bbox_yxyx_n4 = []
+                for annotation in annotations:
+                    if not annotation:
+                        continue
+                    class_name = class_names[int(annotation.split(' ')[0])]
+                    if class_name not in CLASS_NAMES: # class not of interests
+                        continue
+                    class_id = CLASS_NAMES.index(class_name)
+                    class_n.append(class_id)
+                    x, y, w, h = [float(val) for val in annotation.split(' ')[1:]]
+                    x *= img.width
+                    y *= img.height
+                    w *= img.width
+                    h *= img.height
+                    bbox_yxyx_n4.append([y, x, y + h, x + w])
+                # to tf example
+                class_n_str = tf.io.serialize_tensor(tf.stack(class_n)).numpy()
+                bbox_yxyx_n4_str = tf.io.serialize_tensor(tf.stack(bbox_yxyx_n4)).numpy()
+                example = tf.train.Example(features=tf.train.Features(feature={
+                    'image': bytes_feature(img_bin),
+                    'class_n': bytes_feature(class_n_str),
+                    'bbox_yxyx_n4': bytes_feature(bbox_yxyx_n4_str)
+                }))
+                writer.write(example.SerializeToString())
 
 def main(_argv):
     tf_set_memory_growth()
-    if not os.path.exists(FLAGS.output):
-        os.mkdir(FLAGS.output)
-    output_path = os.path.join(FLAGS.output, 'Purdue.tfrecords')
-    if os.path.exists(output_path):
-        os.remove(output_path)
-    with tf.io.TFRecordWriter(output_path) as writer:
-        image_ids = os.listdir(os.path.join(FLAGS.input, 'image'))
-        annot_ids = os.listdir(os.path.join(FLAGS.input, 'image_annotation'))
-        pack_ids = np.stack([image_ids, annot_ids], axis=1)
-        num_image = len(pack_ids)
-        for _, (image_id, annot_id) in zip(tqdm(range(num_image),
-                                                desc='Processing Purdue dataset: ',
-                                                unit='pic',
-                                                ncols=150),
-                                           pack_ids):
-            image_target = convert_image(os.path.join(FLAGS.input, 'image', image_id))
-            object_target, bbox_target = convert_annot(os.path.join(FLAGS.input, 'image_annotation', annot_id))
-            example = tf.train.Example(features=tf.train.Features(feature={
-                'image': bytes_feature(image_target),
-                'object': bytes_feature(object_target),
-                'bbox': bytes_feature(bbox_target),
-            }))
-            writer.write(example.SerializeToString())
-
+    # ensure output path exists
+    os.makedirs(FLAGS.output, exist_ok=True)
+    # read in sample annotations
+    samples = [s.split('.')[0] for s in os.listdir(os.path.join(FLAGS.input, 'annotation'))]
+    with open(os.path.join(FLAGS.input, 'classes.names'), 'r') as f:
+        class_names = f.read().split('\n')
+    # train / validation split
+    random.shuffle(samples)
+    split_idx = int(len(samples) * FLAGS.split)
+    generate_data_split(samples[:split_idx], class_names, 'train')
+    generate_data_split(samples[split_idx:], class_names, 'validation')
 
 if __name__ == '__main__':
     app.run(main)
