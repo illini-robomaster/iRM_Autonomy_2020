@@ -6,7 +6,7 @@ Raw dataset can be downloaded from either one of the sources below
     https://terra-1-g.djicdn.com/b2a076471c6c4b72b574a977334d3e05/resources/DJI%20ROCO.zip
 
 2. iRM OneDrive:
-    TODO: ????
+    https://uillinoisedu-my.sharepoint.com/:u:/g/personal/yixiaos3_illinois_edu/Ef5LIWMYRpNLgMuXGHOrAZoBVKdsymnJ8xWinbJO_pX9OQ?e=POF0Ts
 """
 
 import os
