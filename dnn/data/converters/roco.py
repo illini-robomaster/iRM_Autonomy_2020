@@ -1,32 +1,30 @@
-from absl import app, flags
-from absl.flags import FLAGS
+"""
+This is a converter for the DJI ROCO dataset
+Raw dataset can be downloaded from either one of the sources below
+
+1. DJI (prone to error / change):
+    https://terra-1-g.djicdn.com/b2a076471c6c4b72b574a977334d3e05/resources/DJI%20ROCO.zip
+
+2. iRM OneDrive:
+    https://uillinoisedu-my.sharepoint.com/:u:/g/personal/yixiaos3_illinois_edu/Ef5LIWMYRpNLgMuXGHOrAZoBVKdsymnJ8xWinbJO_pX9OQ?e=POF0Ts
+"""
 
 import os
 import xml.etree.ElementTree as xmlTree
 
 import numpy as np
 import tensorflow as tf
+
+from absl import app, flags
+from absl.flags import FLAGS
+from PIL import Image
 from tqdm import tqdm
 
-from dnn.data.converters.utils import (
-    bytes_feature,
-    CLASS_NAMES,
-)
+from dnn.data.converters.utils import bytes_feature, CLASS_NAMES
 from dnn.utils.mem import tf_set_memory_growth
 
 flags.DEFINE_string('input', None, 'the path for input ROCO dataset (please unzip by yourself)')
 flags.DEFINE_string('output', None, 'the path for output TFRecord file(s)')
-
-
-def convert_image(image_path):
-    """open an image from file path and return the image as a binary string
-
-    Args:
-        image_path:  the file path for your image
-    """
-    with open(image_path, 'rb') as image:
-        image_string = image.read()
-    return image_string
 
 
 def convert_annot(annot_path):
@@ -35,57 +33,57 @@ def convert_annot(annot_path):
     Args:
         annot_path:  the file path for your xml annotation file
     """
+    # parse annotation
     with open(annot_path, 'r') as xml_file:
         tree = xmlTree.parse(xml_file)
     root = tree.getroot()
     objt = []
     bbox = []
-    for _, obj in enumerate(root.iter('object')):
+    for obj in root.iter('object'):
         cls = obj.find('name').text
         if cls == 'ignore':
             continue
-        if cls == 'armor':
+        elif cls == 'armor':
             armor_color = obj.find('armor_color').text
             if armor_color == 'grey':
                 continue
             cls += '_' + armor_color
         bndbox = obj.find('bndbox')
         objt.append(CLASS_NAMES.index(cls))
-        box = [float(bndbox.find('xmin').text),
-                float(bndbox.find('ymin').text),
-                float(bndbox.find('xmax').text),
-                float(bndbox.find('ymax').text)]
+        box = [float(bndbox.findtext('ymin')),
+               float(bndbox.findtext('xmin')),
+               float(bndbox.findtext('ymax')),
+               float(bndbox.findtext('xmax'))]
         bbox.append(box)
-    objt = tf.io.serialize_tensor(tf.convert_to_tensor(objt))
-    bbox = tf.io.serialize_tensor(tf.convert_to_tensor(bbox))
-    return objt.numpy(), bbox.numpy()
+    objt = tf.io.serialize_tensor(tf.convert_to_tensor(objt, dtype=tf.int32))
+    bbox = tf.io.serialize_tensor(tf.convert_to_tensor(bbox, dtype=tf.float32))
+    # get encoded image binaries
+    image_path = annot_path.replace('image_annotation', 'image').replace('.xml', '.jpg')
+    with open(image_path, 'rb') as f:
+        image_target = f.read()
+
+    return image_target, objt.numpy(), bbox.numpy()
 
 
 def main(_argv):
     tf_set_memory_growth()
-    if not os.path.exists(FLAGS.output):
-        os.mkdir(FLAGS.output)
+    os.makedirs(FLAGS.output, exist_ok=True)
     folder_ids = os.listdir(FLAGS.input)
     for n, folder_id in enumerate(folder_ids):
+        if not os.path.isdir(os.path.join(FLAGS.input, folder_id)): # skip irrelavent files
+            continue
         output_path = os.path.join(FLAGS.output, 'ROCO_{}.tfrecords'.format(n + 1))
         if os.path.exists(output_path):
             os.remove(output_path)
+        annot_dir = os.path.join(FLAGS.input, folder_id, 'image_annotation')
         with tf.io.TFRecordWriter(output_path) as writer:
-            image_ids = os.listdir(os.path.join(FLAGS.input, folder_id, 'image'))
-            annot_ids = os.listdir(os.path.join(FLAGS.input, folder_id, 'image_annotation'))
-            pack_ids = np.stack([image_ids, annot_ids], axis=1)
-            num_image = len(pack_ids)
-            for _, (image_id, annot_id) in zip(tqdm(range(num_image),
-                                                    desc='Processing the {} ROCO dataset: '.format(n + 1),
-                                                    unit='pic',
-                                                    ncols=150),
-                                               pack_ids):
-                image_target = convert_image(os.path.join(FLAGS.input, folder_id, 'image', image_id))
-                object_target, bbox_target = convert_annot(os.path.join(FLAGS.input, folder_id, 'image_annotation', annot_id))
+            for annot_file in os.listdir(annot_dir):
+                annot_path = os.path.join(annot_dir, annot_file)
+                image_target, object_target, bbox_target = convert_annot(annot_path)
                 example = tf.train.Example(features=tf.train.Features(feature={
                     'image': bytes_feature(image_target),
-                    'object': bytes_feature(object_target),
-                    'bbox': bytes_feature(bbox_target),
+                    'class_n': bytes_feature(object_target),
+                    'bbox_yxyx_n4': bytes_feature(bbox_target),
                 }))
                 writer.write(example.SerializeToString())
 
