@@ -1,11 +1,12 @@
-# RM_2020_DEV
+# RM_2020_DEV 
+
+![build status](https://github.com/illini-robomaster/iRM_Autonomy_2020/workflows/IRM%20Autonomy%20CI/badge.svg)
+
 iRM 2020 Software Development Repo
 
 ## Dependency
-* Boost
+* Glib2 (for LCM)
 * CMake >= 3.12
-* GTest
-* [lcm](http://lcm-proj.github.io/)
 
 ## Build Steps
 ```

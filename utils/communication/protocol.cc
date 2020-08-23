@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "utils/communication/crc.h"
 #include "utils/communication/protocol.h"
 

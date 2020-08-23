@@ -70,6 +70,7 @@ docs/_build/
 target/
 
 # Jupyter Notebook
+.ipynb
 .ipynb_checkpoints
 
 # pyenv
@@ -105,3 +106,7 @@ venv.bak/
 
 # Cmake flags for autocompletion
 compile_commands.json
+.clangd
+
+# extra rules
+/.idea

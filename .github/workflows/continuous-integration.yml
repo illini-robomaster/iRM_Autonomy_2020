@@ -1,0 +1,52 @@
+name: iRM Autonomy CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  # build on ubuntu
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: get pip cache directory
+      id: pip-cache
+      run: |
+        echo "::set-output name=dir::$(pip3 cache dir)"
+    - name: cache pip
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: pip install
+      run: |
+        echo "caching pip in ${{ steps.pip-cache.outputs.dir }}"
+        pip3 install -r requirements.txt --use-feature=2020-resolver
+    - name: create build
+      run: mkdir build
+    - name: cmake
+      run: cmake -DCMAKE_BUILD_TYPE=Debug ..
+      working-directory: build
+    - name: build
+      run: make -j
+      working-directory: build
+    - name: MacOS - turn off firewall
+      if: matrix.os == 'macos-latest'
+      run: |
+        sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
+        sudo /usr/libexec/ApplicationFirewall/socketfilterfw -k
+    - name: test
+      run: make test
+      working-directory: build
