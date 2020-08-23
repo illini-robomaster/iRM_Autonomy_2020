@@ -30,6 +30,13 @@ flags.DEFINE_float('split', .9, 'train / validation split, e.g. .9 for .9 train 
 
 
 def generate_data_split(samples, class_names, mode='train'):
+    """ generate TFrecord shards for part of a split
+
+    Args:
+        samples:        list of samples to be converted
+        class_names:    list mapping class index to class name for iRM Purdue Dataseat
+        mode:           split mode (usually train / validation)
+    """
     num_shards = len(samples) // FLAGS.shard_size
     output_dir = os.path.join(FLAGS.output, mode)
     os.makedirs(output_dir, exist_ok=True)
