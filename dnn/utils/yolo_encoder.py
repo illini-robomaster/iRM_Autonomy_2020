@@ -1,6 +1,7 @@
 import tensorflow as tf
 from absl.flags import FLAGS
-from dnn.data.augmentation.augmentor import DetectionAugmentor
+from dnn.data.augmentation.detection import DetectionAugmentor
+from dnn.data.augmentation.image import ImageAugmentor
 
 '''
 This file is directly taken from https://github.com/yihjian/yolov3_tf2/blob/master/yolov3_tf2/dataset.py
