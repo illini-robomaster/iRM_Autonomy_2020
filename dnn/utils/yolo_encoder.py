@@ -25,10 +25,18 @@ def transform_targets_for_output(y_true, grid_size, masks):
 
     Args:
         y_true: tensor of shape (boxes, (x1, y1, x2, y2, class, best_anchor))
-        grid_size: int, number of 'cut' per image. For yolov3-tiny, it's 13 and 26.
-        masks: anchor_ids of shape (1,n), e.g : (3,4,5)
+        grid_size: int, number of 'cut' per image. For yolov3-tiny, it's 13 and 26. 
+        masks: ordered anchor_ids of shape (1,n), e.g : (3,4,5)
 
     '''
+    # mask out boxes that doesn't belong to this set of anchors
+    mask = tf.math.logical_and(
+        tf.math.greater_equal(y_true[...,5], masks[0]), 
+        tf.math.less_equal(y_true[...,5], masks[-1])) 
+    mask = tf.reshape(mask, (y_true.shape[0],1))
+    mask = tf.broadcast_to(mask, y_true.shape)
+    y_true = tf.boolean_mask(y_true, mask)
+
     # y_true: (boxes, (x1, y1, x2, y2, class, best_anchor))
     # y_true_out: (grid, grid, anchors, [x, y, w, h, obj, class])
     n = tf.shape(y_true)[0]
@@ -115,32 +123,13 @@ def transform_targets(y_train, anchors, anchor_masks, size):
     # n*6
     y_train = tf.concat([y_train, anchor_idx], axis=-1)
 
-    # A bit of hardcode going on here, ONLY WORKS FOR YOLO3 TINY!
-    # If running yolo3, need to add another code block that account for 
-    # 3 sets of masks
+    for masks in anchor_masks:
+        y_outs.append(transform_targets_for_output(
+            y_train, grid_size, masks))
+        grid_size *= 2
     
-    # Mask out achors doesn't belong to first set of anchors
-    mask = tf.math.greater(y_train[...,5], 2)
-    mask = tf.reshape(mask, (y_train.shape[0],1))
-    mask = tf.broadcast_to(mask, y_train.shape)
-    y_train_size0 = tf.boolean_mask(y_train, anchor_size0)
-    
-    # Reshape is used to prevent matrix dim mismatch
-    y_outs.append(transform_targets_for_output(
-            tf.reshape(y_train_size0, (-1, 6)), grid_size, anchor_masks[0]))
-    grid_size *= 2
-
-    # This is the second set of anchors
-    mask = tf.math.less(y_train[...,5], 3)
-    mask = tf.reshape(mask, (y_train.shape[0],1))
-    mask = tf.broadcast_to(mask, y_train.shape)
-    y_train_size1 = tf.boolean_mask(y_train, mask)
-    y_outs.append(transform_targets_for_output(
-            tf.reshape(y_train_size1, (-1, 6)), grid_size, anchor_masks[1]))
-
-    #y_out[0] = 13*13*3*6, y_out[1] = 26*26*3*6, y_out[2] = 52
+    #y_out[0] = 13*13*3*6, y_out[1] = 26*26*3*6, y_out[2] = 52*52*3*6
     # grid*grid*anchor*(x,y,w,h,confidence,class(2))
-    # 13*13*3*7 [1]
     return tuple(y_outs)
 
 #Placeholder for lambda function
