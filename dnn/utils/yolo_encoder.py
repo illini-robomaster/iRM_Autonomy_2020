@@ -4,11 +4,10 @@ from dnn.data.augmentation.detection import DetectionAugmentor
 from dnn.data.augmentation.image import ImageAugmentor
 
 '''
-This file is directly taken from https://github.com/yihjian/yolov3_tf2/blob/master/yolov3_tf2/dataset.py
 !TODO:
 1. Adapt to new data pipeline
 2. Adapt to new tfrecord format
-3. Vectorize
+3. Vectorize <- Done, however indices need to be adjusted for tfrecord format.
 
 Old data flow:
 1. read df record
@@ -16,12 +15,19 @@ Old data flow:
 3. create a tf.dataset
 4. use lambda functions on tf.dataset to call transform_targets and transform_image (not sure why we need transform_img, got no reply in issue)
 5. transform_targets call transform_target_for_output
+6. Patch
 '''
 
-@tf.function
-def transform_targets_for_output_vectorize(y_true, grid_size, masks):
+
+def transform_targets_for_output(y_true, grid_size, masks):
     '''
-    This doesn't work yet
+    Transform tensors that represent boxes into yolo_out
+
+    Args:
+        y_true: tensor of shape (boxes, (x1, y1, x2, y2, class, best_anchor))
+        grid_size: int, number of 'cut' per image. For yolov3-tiny, it's 13 and 26.
+        masks: anchor_ids of shape (1,n), e.g : (3,4,5)
+
     '''
     # y_true: (boxes, (x1, y1, x2, y2, class, best_anchor))
     # y_true_out: (grid, grid, anchors, [x, y, w, h, obj, class])
@@ -66,66 +72,30 @@ def transform_targets_for_output_vectorize(y_true, grid_size, masks):
          y_true[...,4]], axis=1)
 
     out = tf.tensor_scatter_nd_update(y_true_out, indexes, updates)
-    print(tf.shape(out))
     return out
-
-def transform_targets_for_output(y_true, grid_size, anchor_idxs):
-    '''
-    This works, but pretty slow
-    '''
-    # y_true: (boxes, (x1, y1, x2, y2, class, best_anchor))
-    # n*6
-    N = tf.shape(y_true)[0]
-
-    # y_true_out: (grid, grid, anchors, [x, y, w, h, obj, class])
-    # 13*13*3*6
-    y_true_out = tf.zeros(
-        (grid_size, grid_size, tf.shape(anchor_idxs)[0], 6))
-
-    anchor_idxs = tf.cast(anchor_idxs, tf.int32)
-
-    indexes = tf.TensorArray(tf.int32, 1, dynamic_size=True)
-    updates = tf.TensorArray(tf.float32, 1, dynamic_size=True)
-    idx = 0
-    for j in tf.range(N):
-        # anchor 0-5
-        # mask out if not belong to this size
-        anchor_eq = tf.equal(
-            anchor_idxs, tf.cast(y_true[j][5], tf.int32))
-
-        # If belong to this dimension
-        if tf.reduce_any(anchor_eq):
-            box = y_true[j][0:4]
-            box_yx = (y_true[j][0:2] + y_true[j][2:4]) / 2
-
-            anchor_idx = tf.cast(tf.where(anchor_eq), tf.int32)
-            grid_yx = tf.cast(box_yx // (1/grid_size), tf.int32)
-
-            # grid[y][x][anchor] = (tx, ty, bw, bh, obj, class)
-            indexes = indexes.write(
-                    idx, [grid_yx[0], grid_yx[1], anchor_idx[0][0]]) #  1, 7, 7, 0
-            updates = updates.write(
-                    idx, [box[1], box[0], box[3], box[2], 1, y_true[j][4]]) #1, xmin, ymin, xmax, ymax, 1, class
-            idx += 1
-
-    # tf.print(indexes.stack())
-    # tf.print(updates.stack())
-
-    # update y_true[7][7][0] to (1, xmin, ymin, xmax, ymax, 1, class)
-    return tf.tensor_scatter_nd_update(
-        y_true_out, indexes.stack(), updates.stack())    
 
 
 def transform_targets(y_train, anchors, anchor_masks, size):
+    '''
+    Read raw y_train and return yolo_out of different dimensions.
+
+    args:
+        y_train: label, tensor of shape (n, (x,y,x,y,class))
+        anchors: anchor, tensor of shape(n, 2)
+        anchor_masks: anchor id that is masked for differnent dimension,
+                      For example, [[3,4,5], [1,2,3]] for yolov3-tiny
+        size: size of image
+    '''
     y_outs = []
     grid_size = size // 32
 
     # calculate anchor index for true boxes
-    # anchors shape 3*2
+    # anchors shape 3*n
     anchors = tf.cast(anchors, tf.float32)
     anchor_area = anchors[..., 0] * anchors[..., 1]
 
     # y_true is yxyx after imgaug
+    # How to calculate hw depends on tf_record format
     box_hw = y_train[..., 2:4] - y_train[..., 0:2]
     box_hw = tf.tile(tf.expand_dims(box_hw, -2),
                      (1, tf.shape(anchors)[0], 1))
@@ -145,10 +115,28 @@ def transform_targets(y_train, anchors, anchor_masks, size):
     # n*6
     y_train = tf.concat([y_train, anchor_idx], axis=-1)
 
-    for anchor_idxs in anchor_masks:
-        y_outs.append(transform_targets_for_output(
-            y_train, grid_size, anchor_idxs))
-        grid_size *= 2
+    # A bit of hardcode going on here, ONLY WORKS FOR YOLO3 TINY!
+    # If running yolo3, need to add another code block that account for 
+    # 3 sets of masks
+    
+    # Mask out achors doesn't belong to first set of anchors
+    mask = tf.math.greater(y_train[...,5], 2)
+    mask = tf.reshape(mask, (y_train.shape[0],1))
+    mask = tf.broadcast_to(mask, y_train.shape)
+    y_train_size0 = tf.boolean_mask(y_train, anchor_size0)
+    
+    # Reshape is used to prevent matrix dim mismatch
+    y_outs.append(transform_targets_for_output(
+            tf.reshape(y_train_size0, (-1, 6)), grid_size, anchor_masks[0]))
+    grid_size *= 2
+
+    # This is the second set of anchors
+    mask = tf.math.less(y_train[...,5], 3)
+    mask = tf.reshape(mask, (y_train.shape[0],1))
+    mask = tf.broadcast_to(mask, y_train.shape)
+    y_train_size1 = tf.boolean_mask(y_train, mask)
+    y_outs.append(transform_targets_for_output(
+            tf.reshape(y_train_size1, (-1, 6)), grid_size, anchor_masks[1]))
 
     #y_out[0] = 13*13*3*6, y_out[1] = 26*26*3*6, y_out[2] = 52
     # grid*grid*anchor*(x,y,w,h,confidence,class(2))
@@ -166,7 +154,9 @@ def transform_images(x_train, size):
 
 
 '''
-Following function need to be changed to adapt to new tfrecord format
+!TODO
+Following function need to be changed to adapt to tfrecord format
+Waiting on TF-record documents
 '''
 # https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/using_your_own_dataset.md#conversion-script-outline-conversion-script-outline
 # Commented out fields are not required in our project
@@ -212,19 +202,3 @@ def load_tfrecord_dataset(file_pattern, class_file, size=416):
     files = tf.data.Dataset.list_files(file_pattern)
     dataset = files.flat_map(tf.data.TFRecordDataset)
     return dataset.map(lambda x: parse_tfrecord(x, class_table, size, augmentor))
-
-
-# def load_fake_dataset():
-#     x_train = tf.image.decode_jpeg(
-#         open('./data/girl.png', 'rb').read(), channels=3)
-#     x_train = tf.expand_dims(x_train, axis=0)
-
-#     labels = [
-#         [0.18494931, 0.03049111, 0.9435849,  0.96302897, 0],
-#         [0.01586703, 0.35938117, 0.17582396, 0.6069674, 56],
-#         [0.09158827, 0.48252046, 0.26967454, 0.6403017, 67]
-#     ] + [[0, 0, 0, 0, 0]] * 5
-#     y_train = tf.convert_to_tensor(labels, tf.float32)
-#     y_train = tf.expand_dims(y_train, axis=0)
-
-#     return tf.data.Dataset.from_tensor_slices((x_train, y_train))
