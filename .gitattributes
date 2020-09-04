@@ -1,0 +1,18 @@
+# enforce linux style line endings
+* text=lf
+
+# C / C++
+*.c     text
+*.cc    text
+*.cpp   text
+*.h     text
+*.hpp   text
+*.tpp   text
+
+# Python
+*.py    text
+*.ipynb text
+
+# CMake
+*.cmake text
+*.txt   text
