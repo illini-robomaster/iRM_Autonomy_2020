@@ -7,19 +7,18 @@ from dnn.data.augmentation.image import ImageAugmentor
 !TODO:
 1. Adapt to new data pipeline
 2. Adapt to new tfrecord format
-3. Vectorize <- Done, however indices need to be adjusted for tfrecord format.
 
 Old data flow:
 1. read df record
 2. aug image 
 3. create a tf.dataset
-4. use lambda functions on tf.dataset to call transform_targets and transform_image (not sure why we need transform_img, got no reply in issue)
-5. transform_targets call transform_target_for_output
+4. use lambda functions on tf.dataset to call transform_label and transform_image
+5. transform_label call transform_label_for_output
 6. Patch
 '''
 
 
-def transform_targets_for_output(y_true, grid_size, masks):
+def transform_label_for_output(y_true, grid_size, masks):
     '''
     Transform tensors that represent boxes into yolo_out
 
@@ -42,19 +41,10 @@ def transform_targets_for_output(y_true, grid_size, masks):
     n = tf.shape(y_true)[0]
     y_true_out = tf.zeros((grid_size, grid_size, tf.shape(masks)[0], 6))
     
-    # Because anchors are devided into two/three groups of different grid size,
-    # we need to convert anchor id from 0-8/0-5 to 0-2
-    current_size_anchor_id = tf.cast(masks, tf.int32)
-    #expand it into [3, n]
-    current_size_anchor_id = tf.tile(
-        tf.expand_dims(current_size_anchor_id,1), 
-        [1,n]
-    )
-    anchor_eq = tf.equal(current_size_anchor_id, tf.cast(y_true[...,5], tf.int32))
-    anchor_id = tf.cast(tf.where(anchor_eq), tf.int32)
+    # That means no box of this size
+    if (n == 0):
+        return y_true_out
 
-    if(tf.equal(tf.shape(anchor_id)[0], 0)):
-        return y_true
     #box shape will be (n, 4)
     box = y_true[...,0:4]
     box_yx = (y_true[...,0:2] + y_true[...,2:4]) / 2
@@ -66,7 +56,7 @@ def transform_targets_for_output(y_true, grid_size, masks):
     indexes = tf.stack(
         [grid_yx[...,0], 
          grid_yx[...,1], 
-         tf.cast(anchor_id[...,0], 
+         tf.cast(y_true[...,5] % 3, 
          dtype=tf.int32)], axis=1)
     
     #update should contain object info, size (n, 6)
@@ -83,12 +73,12 @@ def transform_targets_for_output(y_true, grid_size, masks):
     return out
 
 
-def transform_targets(y_train, anchors, anchor_masks, size):
+def transform_label(y_train, anchors, anchor_masks, size):
     '''
     Read raw y_train and return yolo_out of different dimensions.
 
     args:
-        y_train: label, tensor of shape (n, (x,y,x,y,class))
+        y_train: label, tensor of shape (n, (x,y,x,y,class)), should be in range(0, 1)
         anchors: anchor, tensor of shape(n, 2)
         anchor_masks: anchor id that is masked for differnent dimension,
                       For example, [[3,4,5], [1,2,3]] for yolov3-tiny
@@ -124,7 +114,7 @@ def transform_targets(y_train, anchors, anchor_masks, size):
     y_train = tf.concat([y_train, anchor_idx], axis=-1)
 
     for masks in anchor_masks:
-        y_outs.append(transform_targets_for_output(
+        y_outs.append(transform_label_for_output(
             y_train, grid_size, masks))
         grid_size *= 2
     
@@ -133,12 +123,12 @@ def transform_targets(y_train, anchors, anchor_masks, size):
     return tuple(y_outs)
 
 #Placeholder for lambda function
-'''
-Not sure why is it necessary to resize again
-'''
-def transform_images(x_train, size):
+def transform_images_train(x_train):
+    return x_train
+
+def transform_image_inference(x_train, size):
     x_train = tf.image.resize_with_pad(x_train, size, size)
-    x_train = x_train / 255
+    x_train = x_train / 255 #it's possible that we don't need this line, left it there
     return x_train
 
 
