@@ -23,7 +23,7 @@ class Quadratic(KL.Layer):
     def call(self, x):
         return self.a * x**2 + self.b * x + self.c
 
-# modulerization of network building blocks
+# modularization of network building blocks
 class ConvBNReLU(KL.Layer):
     def __init__(self,
         filters,
