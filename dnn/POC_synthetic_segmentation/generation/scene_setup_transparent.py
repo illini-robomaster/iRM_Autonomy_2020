@@ -10,9 +10,10 @@ seed=0
 np.random.seed(seed)
 print(f'seed: {seed}')
 
-DO_LABEL=True
-DO_NUMBER=False
-NUM_SAMPLE=1e3
+# CHANGE ME
+DO_LABEL=True # If we are rendering label or image
+DO_NUMBER=False # If numbers are included
+NUM_SAMPLE=1e3 # How many images to generate
 
 def get_all_objs():
     objs=[]
