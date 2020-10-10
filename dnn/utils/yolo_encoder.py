@@ -35,7 +35,8 @@ class yoloEncoder(tf.Module):
         Transform tensors that represent boxes into yolo_out
 
         Args:
-            y_true: tensor of shape (boxes, (x1, y1, x2, y2, class, best_anchor)), bounding box index must be normalized with image size
+            y_true: tensor of shape (boxes, (x1, y1, x2, y2, class, best_anchor)), 
+                bounding box index must be normalized with image size
             grid_size: int, number of 'cut' per image. For yolov3-tiny, it's 13 and 26. 
             masks: ordered anchor_ids of shape (1,n), e.g : (3,4,5)
 
@@ -54,26 +55,26 @@ class yoloEncoder(tf.Module):
             return y_true_out_gg36
 
         #box shape will be (n, 4)
-        box_n4 = y_true_n6[...,0:4]
-        box_yx = (y_true_n6[...,0:2] + y_true_n6[...,2:4]) / 2
-        grid_yx = tf.cast(box_yx // (1/grid_size), tf.int32)
+        box_yxyx_n4 = y_true_n6[...,0:4]
+        box_yx_n2 = (y_true_n6[...,0:2] + y_true_n6[...,2:4]) / 2
+        grid_yx_n2 = tf.cast(box_yx_n2 // (1/grid_size), tf.int32)
 
         #index should be contain info regarding which box to update
         #shape (n,3)
         #e.g.: [7,7,0] means grid 7*7 and anchor 0        
         indexes_n3 = tf.stack(
-            [grid_yx[...,0], 
-            grid_yx[...,1], 
+            [grid_yx_n2[...,0], 
+            grid_yx_n2[...,1], 
             tf.cast(y_true_n6[...,5] % 3, 
             dtype=tf.int32)], axis=1)
         
         #update should contain object info, size (n, 6)
-        #(x, y, w, h, obj, class) at pos shape
+        #(x, y, w, h, obj, class)
         updates_n6 = tf.stack(
-            [box_n4[...,1], 
-            box_n4[...,0], 
-            box_n4[...,2]-box_n4[...,0], 
-            box_n4[...,3]-box_n4[...,1], 
+            [box_yxyx_n4[...,1], 
+            box_yxyx_n4[...,0], 
+            box_yxyx_n4[...,3]-box_yxyx_n4[...,1], 
+            box_yxyx_n4[...,2]-box_yxyx_n4[...,0], 
             tf.ones((n,)), 
             y_true_n6[...,4]], axis=1)
 
@@ -86,7 +87,8 @@ class yoloEncoder(tf.Module):
         Read raw y_train and return yolo_out of different dimensions.
 
         args:
-            y_train_n5: label, tensor of shape (n, (x,y,x,y,class)), should be in range(0, 1)
+            y_train_n5: label, tensor of shape (n, (x,y,x,y,class)), should be in range(0, 1), 
+                    bounding box index must be normalized with image size
         '''
         y_outs = []
         grid_size = self.size // 32
@@ -127,8 +129,4 @@ class yoloEncoder(tf.Module):
 
     #Placeholder for lambda function
     def transform_images_train(self, x_train):
-        return x_train
-
-    def transform_image_inference(self, x_train, size):
-        x_train = tf.image.resize_with_pad(x_train, size, size)
         return x_train

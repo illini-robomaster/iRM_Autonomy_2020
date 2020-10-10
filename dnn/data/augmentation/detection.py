@@ -2,9 +2,6 @@ import math
 import tensorflow as tf
 import tensorflow_addons as tfa
 
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-for physical_device in physical_devices:
-    tf.config.experimental.set_memory_growth(physical_device, True)
 
 def get_affine_coeffs(output_hw, center_yx, scale_yx):
     """generate affine coefficients for tfa.image.transform
