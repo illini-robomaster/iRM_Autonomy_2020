@@ -57,7 +57,7 @@ class LCMUtilsTest : public TestBase {
     EXPECT_EQ(logger.Start(false), 0);
     EXPECT_EQ(logger.Start(false), -1);
     EXPECT_EQ(lcm_backend.publish("INT32_VEC3D", &vec3d), 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // test: logger goes out of scope should automatically stop logging
   }
 
