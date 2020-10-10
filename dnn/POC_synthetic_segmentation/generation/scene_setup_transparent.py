@@ -56,6 +56,7 @@ def simulate(scene, robot_objects,label_objects,stage_objects,light_objects,numb
     set_visible_all(get_all_objs(),not label)
     set_visible_all(label_objects,label)
     
+    # Register armor plate text update function, force refresh callback to ensure any modification to update function get represented at new script run
     try: 
         bpy.app.handlers.frame_change_post.remove(update)
     except: pass
@@ -89,7 +90,6 @@ def simulate(scene, robot_objects,label_objects,stage_objects,light_objects,numb
             l.data.node_tree.nodes['Emission'].inputs['Strength'].keyframe_insert(
                 data_path='default_value', frame=i)
                 
-    #bpy.app.handlers.frame_change_post.remove(update)
     scene.frame_set(0)
 
 
@@ -102,7 +102,6 @@ if __name__ == '__main__':
     stage_objects=[obj for obj in bpy.context.scene.collection.children.get('Environment').objects]
     light_objects=[obj for obj in bpy.context.scene.collection.children.get('Light').objects]
     number_objects=[obj for obj in bpy.context.scene.collection.children.get('Number').objects]
-    #set_visible_all(robot_objects,visibility=False)
     print(robot_objects)
 
     simulate(scene, robot_objects,label_objects,stage_objects,light_objects,number_objects,obj_camera,bpy.data.objects["Camera Target"],label=DO_LABEL)
