@@ -12,11 +12,11 @@
 #define TEMP_LOG_PRODUCT "/tmp/lcm_utils_test.lcmlog"
 
 class LCMUtilsTest : public TestBase {
- public:
+ protected:
   /**
    * @brief example usage of LCMFileLogger and expected behaviors
    */
-  void LCMFileLoggerTest() {
+  void SetUp() override {
     lcm::LCM lcm_backend;
     lcm::LCMFileLogger logger(TEMP_LOG_PRODUCT);
     // test: consecutive start should fail
@@ -113,6 +113,5 @@ class LCMUtilsTest : public TestBase {
   }
 };
 
-TEST_FM(LCMUtilsTest, LCMFileLoggerTest);
 TEST_FM(LCMUtilsTest, LCMDecodeTest);
 

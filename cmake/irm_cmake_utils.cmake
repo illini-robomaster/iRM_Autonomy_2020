@@ -52,7 +52,7 @@ endfunction()
 #   all generated python modules will go to ${PROJECT_BINARY_DIR}/python_bindings
 function(irm_add_python_module module_name)
     cmake_parse_arguments(PYBIND "" "" "SOURCES;DEPENDS" ${ARGN})
-    pybind11_add_module(${module_name} ${PYBIND_SOURCES})
+    pybind11_add_module(${module_name} SYSTEM ${PYBIND_SOURCES})
     target_link_libraries(${module_name} PRIVATE ${PYBIND_DEPENDS})
     set_target_properties(${module_name} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${IRM_PYTHON_MODULE_DIR})
