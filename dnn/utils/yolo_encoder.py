@@ -35,7 +35,7 @@ class yoloEncoder(tf.Module):
         Transform tensors that represent boxes into yolo_out
 
         Args:
-            y_true: tensor of shape (boxes, (x1, y1, x2, y2, class, best_anchor))
+            y_true: tensor of shape (boxes, (x1, y1, x2, y2, class, best_anchor)), bounding box index must be normalized with image size
             grid_size: int, number of 'cut' per image. For yolov3-tiny, it's 13 and 26. 
             masks: ordered anchor_ids of shape (1,n), e.g : (3,4,5)
 
@@ -43,8 +43,6 @@ class yoloEncoder(tf.Module):
         # mask out boxes that doesn't belong to this set of anchors
         
         mask_n = (y_true_n6[...,5]>= masks[0]) & (y_true_n6[...,5]<=masks[-1])
-        mask_n = tf.reshape(mask_n, (y_true_n6.shape[0],1))
-        mask_n = tf.broadcast_to(mask_n, y_true_n6.shape)
         y_true_n6 = tf.boolean_mask(y_true_n6, mask_n)
 
         # y_true_out: (grid, grid, anchors, [x, y, w, h, obj, class])
