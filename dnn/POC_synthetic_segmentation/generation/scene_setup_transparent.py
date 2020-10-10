@@ -57,11 +57,9 @@ def simulate(scene, robot_objects,label_objects,stage_objects,light_objects,numb
     set_visible_all(label_objects,label)
     
     # Register armor plate text update function, force refresh callback to ensure any modification to update function get represented at new script run
-    try: 
+    if update in bpy.app.handlers.frame_change_post:
         bpy.app.handlers.frame_change_post.remove(update)
-    except: pass
-    if not update in bpy.app.handlers.frame_change_post:
-        bpy.app.handlers.frame_change_post.append(update)
+    bpy.app.handlers.frame_change_post.append(update)
     
     scene.frame_set(0)
     for object in mesh_objs:
