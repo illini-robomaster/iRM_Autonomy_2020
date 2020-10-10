@@ -5,7 +5,7 @@ from img_utils import *
 
 
 def downconv(in_channels, out_channels, kernel_size):
-    padding = int(kernel_size / 2)
+    padding = kernel_size // 2
     return nn.Sequential(
         nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
                   kernel_size=kernel_size, padding=padding),
@@ -21,7 +21,7 @@ def downsamp(channels):
 
 
 def up(in_channels, out_channels, kernel_size):
-    padding = int(kernel_size / 2)
+    padding = kernel_size // 2
     return nn.Sequential(
         nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
                   kernel_size=kernel_size, padding=padding),
@@ -50,7 +50,7 @@ class Model(nn.Module):
             tuple((np.array([res[1], res[0]])/2).astype(int)))
         self.upsample3 = nn.Upsample(
             tuple((np.array([res[1], res[0]])).astype(int)))
-        padding = int(kernel_size / 2)
+        padding = kernel_size // 2
         self.last = nn.Sequential(
             nn.Conv2d(in_channels=2 * channels, out_channels=channels,
                       kernel_size=kernel_size, padding=padding),

@@ -58,10 +58,8 @@ class Model(nn.Module):
         self.ops = nn.ModuleList(ops)
 
     def forward(self, x):
-        # print(x.shape)
         for op in self.ops:
             x = op(x)
-            # print(x.shape)
         return x
 
 

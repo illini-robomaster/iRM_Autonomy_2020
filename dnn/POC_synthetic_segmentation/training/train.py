@@ -1,4 +1,5 @@
 from img_utils import *
+# Select here between unet/fcn for which arch is used
 #from unet import *
 from fcn import *
 from progressbar import ProgressBar
@@ -57,8 +58,6 @@ save_directory_name = './checkpoint'
 sample_directory_name = './samples'
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1.0e-4)
-# optimizer = torch.optim.RMSprop(model.parameters(), lr=1.0e-3)
-# criterion = nn.BCELoss().to(device)
 criterion = nn.MSELoss().to(device)
 for e in range(10000000):
     model.train()
