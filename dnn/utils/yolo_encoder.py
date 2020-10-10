@@ -41,12 +41,11 @@ class yoloEncoder(tf.Module):
 
         '''
         # mask out boxes that doesn't belong to this set of anchors
-        mask = tf.math.logical_and(
-            tf.math.greater_equal(y_true_n6[...,5], masks[0]), 
-            tf.math.less_equal(y_true_n6[...,5], masks[-1])) 
-        mask = tf.reshape(mask, (y_true_n6.shape[0],1))
-        mask = tf.broadcast_to(mask, y_true_n6.shape)
-        y_true_n6 = tf.boolean_mask(y_true_n6, mask)
+        
+        mask_n = (y_true_n6[...,5]>= masks[0]) & (y_true_n6[...,5]<=masks[-1])
+        mask_n = tf.reshape(mask_n, (y_true_n6.shape[0],1))
+        mask_n = tf.broadcast_to(mask_n, y_true_n6.shape)
+        y_true_n6 = tf.boolean_mask(y_true_n6, mask_n)
 
         # y_true_out: (grid, grid, anchors, [x, y, w, h, obj, class])
         n = tf.shape(y_true_n6)[0]
@@ -63,7 +62,7 @@ class yoloEncoder(tf.Module):
 
         #index should be contain info regarding which box to update
         #shape (n,3)
-        #e.g.: [7,7,0] means grid 7*7 and anchor 0
+        #e.g.: [7,7,0] means grid 7*7 and anchor 0        
         indexes_n3 = tf.stack(
             [grid_yx[...,0], 
             grid_yx[...,1], 
@@ -134,5 +133,4 @@ class yoloEncoder(tf.Module):
 
     def transform_image_inference(self, x_train, size):
         x_train = tf.image.resize_with_pad(x_train, size, size)
-        x_train = x_train / 255 #it's possible that we don't need this line, left it there
         return x_train
