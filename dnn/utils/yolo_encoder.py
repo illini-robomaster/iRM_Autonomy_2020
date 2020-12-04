@@ -127,6 +127,18 @@ class yoloEncoder(tf.Module):
         # grid*grid*anchor*(x,y,w,h,confidence,class(2))
         return tuple(y_outs)
 
-    #Placeholder for lambda function
+    # Wrapper for lambda function
     def transform_images_train(self, x_train):
         return x_train
+
+    def __call__(self, tf_record_dataset):
+        '''
+        Takes a tf_record_dataset and return the encoded dataset
+        Args:
+            tf_record_dataset: a processed tf_record, i.e., the input
+                                shape should match and y should be in 0~1
+        '''
+        return tf_record_dataset.map(lambda x, y: (
+            self.transform_images_train(x),
+            self.transform_label(y)
+        ))
