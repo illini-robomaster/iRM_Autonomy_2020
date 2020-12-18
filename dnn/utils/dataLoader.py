@@ -1,7 +1,7 @@
 import tensorflow as tf
 from dnn.data.augmentation.detection import DetectionAugmentor
 from dnn.data.augmentation.image import ImageAugmentor
-
+from dnn.parameters import PARAM
 
 FEATURES = {
     'image': tf.io.FixedLenFeature([], tf.string),
@@ -11,7 +11,7 @@ FEATURES = {
 
 
 class dataLoader(tf.Module):
-    def __init__(self, size = 416, feature = FEATURES):
+    def __init__(self, size = PARAM['size'], feature = FEATURES):
         '''
         Args:
             !TODO modify this for a more customized data augmentation
@@ -34,9 +34,11 @@ class dataLoader(tf.Module):
         
         augmentor_input = {
             'image_hw3':    tf.io.decode_image(example['image']),
-            'class_n':      tf.io.parse_tensor(example['class_n'], tf.int32),
+            'label_n':      tf.io.parse_tensor(example['class_n'], tf.int32),
             'bbox_yxyx_n4': tf.io.parse_tensor(example['bbox_yxyx_n4'], tf.float32),
         }
+        for a in augmentor_input:
+            print(tf.shape(a))
         augmentor_output = self.detection_augmentor(augmentor_input)
         
         x_train_hw3 = augmentor_output['image_hw3']

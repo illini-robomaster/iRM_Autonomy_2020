@@ -1,22 +1,10 @@
 import tensorflow as tf
 import numpy as np
-from absl.flags import FLAGS
 
-# maybe use tf.Tensor?
-YOLO_TINY_ANCHORS = np.array(
-    [[10, 14], 
-    [23, 27], 
-    [37, 58],
-    [81, 82], 
-    [135, 169],  
-    [344, 319]],
-    dtype = np.float32
-)
-
-YOLO_TINY_ANCHOR_MASKS = [[3,4,5], [1,2,3]]
+from dnn.parameters import PARAM
 
 class yoloEncoder(tf.Module):
-    def __init__(self, size = 416, anchor = YOLO_TINY_ANCHORS, mask = YOLO_TINY_ANCHOR_MASKS):
+    def __init__(self, size = PARAM['size'], anchor = PARAM['yolo_tiny_anchors'], mask = PARAM['yolo_tiny_anchor_masks']):
         '''
         Args:
             size: size of the image
