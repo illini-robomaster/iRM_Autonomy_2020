@@ -31,14 +31,11 @@ class dataLoader(tf.Module):
             tfrecord: A tfrecord dataset
         '''
         example = tf.io.parse_single_example(tfrecord, self.feature_map)
-        
         augmentor_input = {
-            'image_hw3':    tf.io.decode_image(example['image']),
+            'image_hw3':    tf.io.decode_image(example['image'], channels=3),
             'label_n':      tf.io.parse_tensor(example['class_n'], tf.int32),
             'bbox_yxyx_n4': tf.io.parse_tensor(example['bbox_yxyx_n4'], tf.float32),
         }
-        for a in augmentor_input:
-            print(tf.shape(a))
         augmentor_output = self.detection_augmentor(augmentor_input)
         
         x_train_hw3 = augmentor_output['image_hw3']

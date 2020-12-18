@@ -23,12 +23,12 @@ PARAM = {
     'workers': 12,
     # Data
     'train': [
-        './data/roco/roco_10.tfrecords',
-        './data/roco/roco_11.tfrecords',
-        './data/roco/roco_12.tfrecords',
+        './data/converters/roco/ROCO_10.tfrecords',
+        './data/converters/roco/ROCO_11.tfrecords',
+        './data/converters/roco/ROCO_13.tfrecords',
     ],
     'val': [
-        './data/roco/roco_13.tfrecords',
+        './data/converters/roco/ROCO_12.tfrecords',
     ],
     # save model dir
     'save_dir': './out'
