@@ -1,5 +1,4 @@
 import tensorflow as tf
-from absl.flags import FLAGS
 from dnn.data.augmentation.detection import DetectionAugmentor
 from dnn.data.augmentation.image import ImageAugmentor
 
