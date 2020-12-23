@@ -1,8 +1,7 @@
 import tensorflow as tf
-from absl.flags import FLAGS
 from dnn.data.augmentation.detection import DetectionAugmentor
 from dnn.data.augmentation.image import ImageAugmentor
-
+from dnn.parameters import PARAM
 
 FEATURES = {
     'image': tf.io.FixedLenFeature([], tf.string),
@@ -12,7 +11,7 @@ FEATURES = {
 
 
 class dataLoader(tf.Module):
-    def __init__(self, size = 416, feature = FEATURES):
+    def __init__(self, size = PARAM['size'], feature = FEATURES):
         '''
         Args:
             !TODO modify this for a more customized data augmentation
@@ -32,10 +31,9 @@ class dataLoader(tf.Module):
             tfrecord: A tfrecord dataset
         '''
         example = tf.io.parse_single_example(tfrecord, self.feature_map)
-        
         augmentor_input = {
-            'image_hw3':    tf.io.decode_image(example['image']),
-            'class_n':      tf.io.parse_tensor(example['class_n'], tf.int32),
+            'image_hw3':    tf.io.decode_image(example['image'], channels=3),
+            'label_n':      tf.io.parse_tensor(example['class_n'], tf.int32),
             'bbox_yxyx_n4': tf.io.parse_tensor(example['bbox_yxyx_n4'], tf.float32),
         }
         augmentor_output = self.detection_augmentor(augmentor_input)

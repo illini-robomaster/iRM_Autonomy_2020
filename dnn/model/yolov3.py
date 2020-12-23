@@ -1,5 +1,3 @@
-from absl import flags
-from absl.flags import FLAGS
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
@@ -16,15 +14,15 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.losses import binary_crossentropy
+from dnn.parameters import PARAM
 
-flags.DEFINE_integer('yolo_max_boxes', 100, 'maximum number of boxes per image')
-flags.DEFINE_float('yolo_iou_threshold', 0.5, 'iou threshold')
-flags.DEFINE_float('yolo_score_threshold', 0.5, 'score threshold')
-flags.DEFINE_integer('class_number', 5, 'the number of classes')
+yolo_max_boxes = PARAM['max_boxes']
+yolo_iou_threshold = PARAM['iou_threshold']
+yolo_score_threshold = PARAM['score_threshold']
+class_number = PARAM['class_number']
 
-yolo_anchors = np.array([(10, 13), (16, 30), (33, 23), (30, 61), (62, 45), (59, 119), (116, 90), (156, 198), (373, 326)], np.float32) / 416
-yolo_anchor_masks = np.array([[6, 7, 8], [3, 4, 5], [0, 1, 2]])
-
+yolo_anchors = PARAM["yolo_anchors"] / PARAM["size"]
+yolo_anchor_masks = PARAM["yolo_anchor_masks"] / PARAM["size"]
 
 def broadcast_iou(box_1, box_2):
     # box_1: (..., (x1, y1, x2, y2))
@@ -163,10 +161,10 @@ def yolo_nms(outputs):
     boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
         boxes=tf.reshape(bbox, (tf.shape(bbox)[0], -1, 1, 4)),
         scores=tf.reshape(scores, (tf.shape(scores)[0], -1, tf.shape(scores)[-1])),
-        max_output_size_per_class=FLAGS.yolo_max_boxes,
-        max_total_size=FLAGS.yolo_max_boxes,
-        iou_threshold=FLAGS.yolo_iou_threshold,
-        score_threshold=FLAGS.yolo_score_threshold
+        max_output_size_per_class=yolo_max_boxes,
+        max_total_size=yolo_max_boxes,
+        iou_threshold=yolo_iou_threshold,
+        score_threshold=yolo_score_threshold
     )
 
     return boxes, scores, classes, valid_detections
@@ -195,7 +193,7 @@ def YoloV3(size=None, channels=3, anchors=yolo_anchors, masks=yolo_anchor_masks,
     return Model(inputs, outputs, name='yolov3')
 
 
-def YoloLoss(anchors, classes=FLAGS.class_number, ignore_thresh=0.5):
+def YoloLoss(anchors, classes=class_number, ignore_thresh=0.5):
     def yolo_loss(y_true, y_pred):
         # 1. transform all pred outputs
         # y_pred: (batch_size, grid, grid, anchors, (x, y, w, h, obj, ...cls))
