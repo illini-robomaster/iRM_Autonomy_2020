@@ -15,8 +15,9 @@ class yoloEncoder(tf.Module):
         super(yoloEncoder, self).__init__()
         self.img_size = size
         self.anchors_n2 = anchor / size
-        self.anchor_masks_n3 = tf.cast(mask, tf.float32)
+        self.anchor_masks_n3 = mask
 
+    @tf.function # to enable comparison with boolean, line 42
     def transform_label_for_output(self, y_true_n6, grid_size, masks):
         '''
         Transform tensors that represent boxes into yolo_out

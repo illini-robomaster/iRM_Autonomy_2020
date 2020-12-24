@@ -5,10 +5,10 @@ PARAM = {
     'size': 416, 
     # yolo anchors
     'yolo_anchors': np.array([(10, 13), (16, 30), (33, 23), (30, 61), (62, 45), (59, 119), (116, 90), (156, 198), (373, 326)], np.float32),
-    'yolo_anchor_masks': np.array([[6, 7, 8], [3, 4, 5], [0, 1, 2]]),
+    'yolo_anchor_masks': np.array([[6, 7, 8], [3, 4, 5], [0, 1, 2]], np.float32),
     # yolo v3 tiny Anchors
     "yolo_tiny_anchors": np.array([(10, 14), (23, 27), (37, 58), (81, 82), (135, 169), (344, 319)], np.float32),
-    "yolo_tiny_anchor_masks": np.array([[3, 4, 5], [0, 1, 2]]),
+    "yolo_tiny_anchor_masks": np.array([[3, 4, 5], [0, 1, 2]], np.float32),
     # Cutoff Params
     'max_boxes': 100,
     'iou_threshold': 0.5,
@@ -22,13 +22,13 @@ PARAM = {
     'early_stop': (0, 6, 1),
     'workers': 12,
     # Data
-    'train': [
-        './data/converters/roco/ROCO_10.tfrecords',
-        './data/converters/roco/ROCO_11.tfrecords',
-        './data/converters/roco/ROCO_13.tfrecords',
-    ],
+    'train': np.array([
+        'F:/RM/iRM_Autonomy_2020/dnn/data/roco/ROCO_8.tfrecords',
+        'F:/RM/iRM_Autonomy_2020/dnn/data/roco/ROCO_6.tfrecords',
+        'F:/RM/iRM_Autonomy_2020/dnn/data/roco/ROCO_7.tfrecords',
+    ]),
     'val': [
-        './data/converters/roco/ROCO_12.tfrecords',
+        'F:/RM/iRM_Autonomy_2020/dnn/data/roco/ROCO_5.tfrecords',
     ],
     # save model dir
     'save_dir': './out'
