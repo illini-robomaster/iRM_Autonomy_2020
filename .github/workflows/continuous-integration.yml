@@ -18,7 +18,7 @@ jobs:
     - name: setup python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '>=3.5 <3.9'
     - name: get pip cache directory
       id: pip-cache
       run: |
