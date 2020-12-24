@@ -11,9 +11,8 @@ from dnn.utils.yolo_encoder import yoloEncoder
 from dnn.parameters import PARAM
 from dnn.utils.mem import tf_set_memory_growth
 
+@tf.function
 def main():
-    # set memory growth
-    tf_set_memory_growth()
     # Get params
     size = PARAM['size']
     anchors = PARAM['yolo_tiny_anchors']
@@ -58,5 +57,7 @@ def main():
     model.save(PARAM['save_dir'])
 
 if __name__ == '__main__':
+    # set memory growth
+    tf_set_memory_growth()
     main()
 

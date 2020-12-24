@@ -36,14 +36,18 @@ class dataLoader(tf.Module):
             'label_n':      tf.io.parse_tensor(example['class_n'], tf.int32),
             'bbox_yxyx_n4': tf.io.parse_tensor(example['bbox_yxyx_n4'], tf.float32),
         }
-        augmentor_output = self.detection_augmentor(augmentor_input)
         
+        augmentor_input['image_hw3'].set_shape((None, None, 3))
+        augmentor_input['label_n'].set_shape((None,))
+        augmentor_input['bbox_yxyx_n4'].set_shape((None, 4))
+        
+        augmentor_output = self.detection_augmentor(augmentor_input)
         x_train_hw3 = augmentor_output['image_hw3']
         x_train_hw3 = self.image_augmentor(x_train_hw3)
         
         y_train_n5 = tf.concat(
-            [augmentor_output['bbox_yxyx_n4']/self.img_size, 
-            tf.expand_dims(augmentor_output['label_n'], -1)], 
+            [augmentor_output['bbox_yxyx_n4'] / self.img_size, 
+            tf.cast(tf.expand_dims(augmentor_output['label_n'], -1), tf.float32)], 
             axis = -1)
 
         return x_train_hw3, y_train_n5
@@ -54,5 +58,6 @@ class dataLoader(tf.Module):
         Args:
             file: A file (a list of files?) of tfrecord
         '''
+        print(file)
         return tf.data.TFRecordDataset(file).map(lambda x : self._parse_example(x))
 

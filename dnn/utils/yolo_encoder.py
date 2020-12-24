@@ -15,8 +15,7 @@ class yoloEncoder(tf.Module):
         super(yoloEncoder, self).__init__()
         self.img_size = size
         self.anchors_n2 = anchor / size
-        self.anchor_masks_n3 = mask
-
+        self.anchor_masks_n3 = tf.cast(mask, tf.float32)
 
     def transform_label_for_output(self, y_true_n6, grid_size, masks):
         '''
@@ -69,7 +68,6 @@ class yoloEncoder(tf.Module):
         out = tf.tensor_scatter_nd_update(y_true_out_gg36, indexes_n3, updates_n6)
         return out
 
-
     def transform_label(self, y_train_n5):
         '''
         Read raw y_train and return yolo_out of different dimensions.
@@ -79,10 +77,10 @@ class yoloEncoder(tf.Module):
                     bounding box index must be normalized with image size
         '''
         y_outs = []
-        grid_size = self.size // 32
+        grid_size = self.img_size // 32
 
         # calculate anchor index for true boxes
-        anchors_n2 = tf.cast(self.anchors, tf.float32)
+        anchors_n2 = tf.cast(self.anchors_n2, tf.float32)
         anchor_area = anchors_n2[..., 0] * anchors_n2[..., 1]
 
         # y_true is yxyx after imgaug
@@ -106,7 +104,7 @@ class yoloEncoder(tf.Module):
         # n*6
         y_train_n6 = tf.concat([y_train_n5, anchor_idx], axis=-1)
 
-        for masks in self.anchor_masks:
+        for masks in self.anchor_masks_n3:
             y_outs.append(self.transform_label_for_output(
                 y_train_n6, grid_size, masks))
             grid_size *= 2
