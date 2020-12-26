@@ -117,3 +117,6 @@ compile_commands.json
 # dataset
 /dnn/data/purdue
 /dnn/data/roco
+
+# Training ckpt
+/dnn/checkpoints
