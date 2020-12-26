@@ -18,3 +18,6 @@ make -j
 
 ## Run Tests
 `make test` or `ctest` in `build` folder
+
+## Run Python Script
+`PYTHONPATH+=<path to RM_2020DEV> python3 <scriptfile>`
