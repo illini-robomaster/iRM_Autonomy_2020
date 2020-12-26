@@ -12,11 +12,11 @@
 #define TEMP_LOG_PRODUCT "/tmp/lcm_utils_test.lcmlog"
 
 class LCMUtilsTest : public TestBase {
- public:
+ protected:
   /**
    * @brief example usage of LCMFileLogger and expected behaviors
    */
-  void LCMFileLoggerTest() {
+  void SetUp() override {
     lcm::LCM lcm_backend;
     lcm::LCMFileLogger logger(TEMP_LOG_PRODUCT);
     // test: consecutive start should fail
@@ -57,7 +57,7 @@ class LCMUtilsTest : public TestBase {
     EXPECT_EQ(logger.Start(false), 0);
     EXPECT_EQ(logger.Start(false), -1);
     EXPECT_EQ(lcm_backend.publish("INT32_VEC3D", &vec3d), 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // test: logger goes out of scope should automatically stop logging
   }
 
@@ -113,6 +113,5 @@ class LCMUtilsTest : public TestBase {
   }
 };
 
-TEST_FM(LCMUtilsTest, LCMFileLoggerTest);
 TEST_FM(LCMUtilsTest, LCMDecodeTest);
 
