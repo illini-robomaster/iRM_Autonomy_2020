@@ -9,11 +9,6 @@ Raw dataset can be downloaded from either one of the sources below
     https://uillinoisedu-my.sharepoint.com/:u:/g/personal/yixiaos3_illinois_edu/Ef5LIWMYRpNLgMuXGHOrAZoBVKdsymnJ8xWinbJO_pX9OQ?e=POF0Ts
 """
 
-import sys
-import os
-sys.path.insert(0, os.path.abspath('.').split('/dnn')[0])
-print('Trim path to',sys.path[0])
-
 from dnn.utils.mem import tf_set_memory_growth
 from dnn.data.converters.utils import bytes_feature, CLASS_NAMES
 import os
