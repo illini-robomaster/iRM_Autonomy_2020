@@ -32,11 +32,6 @@ def main():
     encoder = yoloEncoder(size, anchors, anchor_masks)
     train_data = train_data.shuffle(buffer_size = 512)
     train = encoder(train_data)
-
-    # this doesn't work, so still something wrong with dataset
-    test = iter(train)
-    print(next(test))
-
     val = encoder(val_data)
     # batch and prefetch
     train = train.batch(batch_size)
@@ -70,6 +65,7 @@ def main():
                 epoch, batch, total_loss.numpy(),
                 list(map(lambda x: np.sum(x.numpy()), pred_loss))))
             avg_loss.update_state(total_loss)
+            model.save(PARAM['save_dir'])
 
         for batch, (images, labels) in enumerate(val):
             outputs = model(images)
