@@ -11,7 +11,7 @@ FEATURES = {
 
 
 class dataLoader(tf.Module):
-    def __init__(self, size = PARAM['size'], feature = FEATURES):
+    def __init__(self, size = PARAM['size'], feature = FEATURES, train=True):
         '''
         Args:
             !TODO modify this for a more customized data augmentation
@@ -23,6 +23,7 @@ class dataLoader(tf.Module):
         self.detection_augmentor = DetectionAugmentor(output_hw=(size, size))
         self.image_augmentor = ImageAugmentor()
         self.feature_map = feature
+        self.train = train
     
     def _parse_example(self, tfrecord):
         '''
@@ -43,9 +44,10 @@ class dataLoader(tf.Module):
         augmentor_input['bbox_yxyx_n4'].set_shape((None, 4))
 
         # Run augmentation
-        augmentor_output = self.detection_augmentor(augmentor_input)
+        augmentor_output = self.detection_augmentor(augmentor_input,training=self.train)
         x_train_hw3 = augmentor_output['image_hw3']
-        x_train_hw3 = self.image_augmentor(x_train_hw3)
+        if self.train: # only do color augmentation when training
+            x_train_hw3 = self.image_augmentor(x_train_hw3)
         
         # Cat label behind
         y_train_n5 = tf.concat(

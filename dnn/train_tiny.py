@@ -24,9 +24,10 @@ def main():
     epoch = PARAM['epoch']
     batch_size = PARAM['batch_size']
     # Load training and validation data
-    loader = dataLoader(size)
-    train_data = loader(train_dir)
-    val_data = loader(val_dir)
+    loader_train = dataLoader(size, train = True)
+    loader_test = dataLoader(size, train = False)
+    train_data = loader_train(train_dir)
+    val_data = loader_test(val_dir)
     # encode data
     encoder = yoloEncoder(size, anchors, anchor_masks)
     train_data = train_data.shuffle(buffer_size = 512)
@@ -53,7 +54,6 @@ def main():
     avg_val_loss = tf.keras.metrics.Mean('val_loss', dtype=tf.float32)
     for epoch in range(1, epoch + 1):
         for batch, (images, labels) in enumerate(train):
-            print("wtf")
             with tf.GradientTape() as tape:
                 outputs = model(images, training=True)
                 regularization_loss = tf.reduce_sum(model.losses)
@@ -66,7 +66,7 @@ def main():
             optimizer.apply_gradients(
                 zip(grads, model.trainable_variables))
 
-            print("{}_train_{}, {}, {}".format(
+            print("Epoch {}.{}, Train Loss: {}, {}".format(
                 epoch, batch, total_loss.numpy(),
                 list(map(lambda x: np.sum(x.numpy()), pred_loss))))
             avg_loss.update_state(total_loss)
@@ -79,12 +79,12 @@ def main():
                 pred_loss.append(loss_fn(label, output))
             total_loss = tf.reduce_sum(pred_loss) + regularization_loss
 
-            print("{}_val_{}, {}, {}".format(
+            print("Epoch {}.{}, Validation Loss: {}, {}".format(
                 epoch, batch, total_loss.numpy(),
                 list(map(lambda x: np.sum(x.numpy()), pred_loss))))
             avg_val_loss.update_state(total_loss)
 
-        print("{}, train: {}, val: {}".format(
+        print("Epoch {} Summary, train: {}, val: {}".format(
             epoch,
             avg_loss.result().numpy(),
             avg_val_loss.result().numpy()))
