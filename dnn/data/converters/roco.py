@@ -23,7 +23,8 @@ from tqdm import tqdm
 from dnn.data.converters.utils import bytes_feature, CLASS_NAMES
 from dnn.utils.mem import tf_set_memory_growth
 
-flags.DEFINE_string('input', None, 'the path for input ROCO dataset (please unzip by yourself)')
+flags.DEFINE_string(
+    'input', None, 'the path for input ROCO dataset (please unzip by yourself)')
 flags.DEFINE_string('output', None, 'the path for output TFRecord file(s)')
 
 
@@ -39,6 +40,7 @@ def convert_annot(annot_path):
     root = tree.getroot()
     objt = []
     bbox = []
+    nobj = len(list(root.iter('object')))
     for obj in root.iter('object'):
         cls = obj.find('name').text
         if cls == 'ignore':
@@ -58,11 +60,12 @@ def convert_annot(annot_path):
     objt = tf.io.serialize_tensor(tf.convert_to_tensor(objt, dtype=tf.int32))
     bbox = tf.io.serialize_tensor(tf.convert_to_tensor(bbox, dtype=tf.float32))
     # get encoded image binaries
-    image_path = annot_path.replace('image_annotation', 'image').replace('.xml', '.jpg')
+    image_path = annot_path.replace(
+        'image_annotation', 'image').replace('.xml', '.jpg')
     with open(image_path, 'rb') as f:
         image_target = f.read()
 
-    return image_target, objt.numpy(), bbox.numpy()
+    return image_target, objt.numpy(), bbox.numpy(), nobj
 
 
 def main(_argv):
@@ -70,16 +73,21 @@ def main(_argv):
     os.makedirs(FLAGS.output, exist_ok=True)
     folder_ids = os.listdir(FLAGS.input)
     for n, folder_id in enumerate(folder_ids):
-        if not os.path.isdir(os.path.join(FLAGS.input, folder_id)): # skip irrelavent files
+        if not os.path.isdir(os.path.join(FLAGS.input, folder_id)):  # skip irrelavent files
             continue
-        output_path = os.path.join(FLAGS.output, 'ROCO_{}.tfrecords'.format(n + 1))
+        output_path = os.path.join(
+            FLAGS.output, 'ROCO_{}.tfrecords'.format(n + 1))
         if os.path.exists(output_path):
             os.remove(output_path)
         annot_dir = os.path.join(FLAGS.input, folder_id, 'image_annotation')
         with tf.io.TFRecordWriter(output_path) as writer:
             for annot_file in os.listdir(annot_dir):
                 annot_path = os.path.join(annot_dir, annot_file)
-                image_target, object_target, bbox_target = convert_annot(annot_path)
+                image_target, object_target, bbox_target, nobj = convert_annot(
+                    annot_path)
+                if nobj == 0: 
+                    print(f'Skip {annot_path} for having zero annotation')
+                    continue
                 example = tf.train.Example(features=tf.train.Features(feature={
                     'image': bytes_feature(image_target),
                     'class_n': bytes_feature(object_target),
