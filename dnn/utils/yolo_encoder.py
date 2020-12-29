@@ -61,8 +61,8 @@ class yoloEncoder(tf.Module):
         updates_n6 = tf.stack(
             [box_yxyx_n4[...,1], 
             box_yxyx_n4[...,0], 
-            box_yxyx_n4[...,3]-box_yxyx_n4[...,1], 
-            box_yxyx_n4[...,2]-box_yxyx_n4[...,0], 
+            box_yxyx_n4[...,3],
+            box_yxyx_n4[...,2],
             tf.ones((n,)), 
             y_true_n6[...,4]], axis=1)
 
