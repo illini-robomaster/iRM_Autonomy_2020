@@ -46,8 +46,8 @@ def main(_argv):
         _, img = vid.read()
 
         if img is None:
-            print("Skipping empty Frame")
-            continue
+            print("End of video")
+            break
 
         img_in = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_in = tf.image.resize(img_in, (FLAGS.size, FLAGS.size))
@@ -68,6 +68,7 @@ def main(_argv):
         if cv2.waitKey(1) == ord('q'):
             break
 
+    vid.release()
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
