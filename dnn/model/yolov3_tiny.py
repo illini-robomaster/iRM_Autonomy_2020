@@ -187,6 +187,7 @@ def YoloV3Tiny(size=None, channels=3, anchors=yolo_tiny_anchors, masks=yolo_tiny
     if training:
         return Model(inputs, (output_0, output_1), name='yolov3_tiny')
 
+    masks = np.array(yolo_tiny_anchor_masks, dtype=np.int)
     boxes_0 = Lambda(lambda x: yolo_boxes(x, anchors[masks[0]], classes), name='yolo_boxes_0')(output_0)
     boxes_1 = Lambda(lambda x: yolo_boxes(x, anchors[masks[1]], classes), name='yolo_boxes_1')(output_1)
 
