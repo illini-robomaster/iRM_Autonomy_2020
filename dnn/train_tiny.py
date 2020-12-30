@@ -65,7 +65,9 @@ def main():
                 epoch, batch, total_loss.numpy(),
                 list(map(lambda x: np.sum(x.numpy()), pred_loss))))
             avg_loss.update_state(total_loss)
-            model.save(PARAM['save_dir'])
+
+        print("Model Saved")
+        model.save(PARAM['save_dir'])
 
         for batch, (images, labels) in enumerate(val):
             outputs = model(images)
