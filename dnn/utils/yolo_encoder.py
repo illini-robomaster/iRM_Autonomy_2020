@@ -57,7 +57,8 @@ class yoloEncoder(tf.Module):
             dtype=tf.int32)], axis=1)
         
         #update should contain object info, size (n, 6)
-        #(x, y, w, h, obj, class)
+        #(x1, y1, x1, y1, obj, class)
+        #!TODO precalculate xy center and hw instead of doing it in loss function
         updates_n6 = tf.stack(
             [box_yxyx_n4[...,1], 
             box_yxyx_n4[...,0], 

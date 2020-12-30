@@ -120,3 +120,6 @@ compile_commands.json
 
 # Training ckpt
 /dnn/checkpoints
+
+# model
+/dnn/out
