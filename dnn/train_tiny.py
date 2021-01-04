@@ -40,8 +40,9 @@ def main():
     val = val.prefetch(buffer_size = tf.data.experimental.AUTOTUNE)
     # initialize model, loss function and optimizer
     model = YoloV3Tiny(size, classes=num_cls, training=True)
-    loss = [YoloLoss(anchors[mask], classes=num_cls) 
-            for mask in np.array(anchor_masks, dtype=np.int8)] #cast to int 
+    # anchors must be 0~1, corresponding to encoder, mask cast to int
+    loss = [YoloLoss(anchors[mask] / 416, classes=num_cls) 
+            for mask in np.array(anchor_masks, dtype=np.int8)] 
     optimizer = tf.keras.optimizers.Adam(lr = lr)
     
     # compile
@@ -49,8 +50,8 @@ def main():
 
     # setup callbacks
     callbacks = [
-        ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=2, verbose=1),
-        EarlyStopping(monitor='val_loss', min_delta=0, patience=6, verbose=1),
+        ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1),
+        EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1),
         ModelCheckpoint('checkpoints/yolov3_train_{epoch}.tf',
                         verbose=1, save_weights_only=True),
     ]
@@ -64,7 +65,7 @@ def main():
         use_multiprocessing = True
     )
 
-    model.save(PARAM['save_dir'])
+    #model.save(PARAM['save_dir'])
 
 if __name__ == '__main__':
     # set memory growth

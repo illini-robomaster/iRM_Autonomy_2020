@@ -71,6 +71,9 @@ def generate_data_split(samples, class_names, mode='train'):
                     w *= img.width
                     h *= img.height
                     bbox_yxyx_n4.append([y, x, y + h, x + w])
+                if len(class_n) == 0:
+                    print("skipping empty label ", img_path)
+                    continue
                 # to tf example
                 class_n = tf.convert_to_tensor(class_n, dtype=tf.int32)
                 bbox_yxyx_n4 = tf.convert_to_tensor(bbox_yxyx_n4, dtype=tf.float32)
