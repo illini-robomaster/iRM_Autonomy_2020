@@ -9,6 +9,7 @@ import json
 import io
 import os
 import random
+import numpy as np
 import tensorflow as tf
 
 from absl import app, flags
@@ -78,6 +79,13 @@ def generate_data_split(samples, class_names, mode='train'):
                     w *= img.width
                     h *= img.height
                     bbox_yxyx_n4.append([y, x, y + h, x + w])
+
+                # no annotation
+                if not class_n:
+                    class_n = np.zeros((0,), dtype=np.int32)
+                    difficulties = np.zeros((0,), dtype=np.int32)
+                    bbox_yxyx_n4 = np.zeros((0, 4), dtype=np.float32)
+
                 # to tf example
                 class_n = tf.convert_to_tensor(class_n, dtype=tf.int32)
                 difficulties = tf.convert_to_tensor(difficulties, dtype=tf.int32)
@@ -86,7 +94,7 @@ def generate_data_split(samples, class_names, mode='train'):
                 example = tf.train.Example(features=tf.train.Features(feature={
                     'image': bytes_feature(img_bin),
                     'class_n': bytes_feature(tf.io.serialize_tensor(class_n).numpy()),
-                    'bbox_yxyx_n4': bytes_feature(tf.io.serialize_tensor(bbox_yxyx_n4).numpy())
+                    'bbox_yxyx_n4': bytes_feature(tf.io.serialize_tensor(bbox_yxyx_n4).numpy()),
                     '''
                     difficulty:
                         -1: DNE
@@ -94,7 +102,7 @@ def generate_data_split(samples, class_names, mode='train'):
                         1，20%<cover<=50%
                         2，cover>50%
                     '''
-                    'difficulties': bytes_feature(difficulties),
+                    'difficulties': bytes_feature(tf.io.serialize_tensor(difficulties).numpy()),
                 }))
                 writer.write(example.SerializeToString())
 
