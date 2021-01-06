@@ -20,7 +20,6 @@ import tensorflow as tf
 from absl import app, flags
 from absl.flags import FLAGS
 from PIL import Image
-from tqdm import tqdm
 
 
 flags.DEFINE_string(
@@ -60,9 +59,16 @@ def convert_annot(annot_path):
         diff = obj.findtext('difficulty')
         diff = int(diff) if diff is not None else -1
         difficulties.append(diff)
+
+    # no positive detections
+    if not objt:
+        objt = np.zeros((0,), dtype=np.int32)
+        bbox = np.zeros((0, 4), dtype=np.float32)
+        difficulties = np.zeros((0,), dtype=np.int32)
+
     objt = tf.io.serialize_tensor(tf.convert_to_tensor(objt, dtype=tf.int32))
     bbox = tf.io.serialize_tensor(tf.convert_to_tensor(bbox, dtype=tf.float32))
-    difficulties = tf.io.serialize_tensor(tf.convert_to_tensor(difficulties, dtype=tf.int8))
+    difficulties = tf.io.serialize_tensor(tf.convert_to_tensor(difficulties, dtype=tf.int32))
     # get encoded image binaries
     image_path = annot_path.replace(
         'image_annotation', 'image').replace('.xml', '.jpg')
