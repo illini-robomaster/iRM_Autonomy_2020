@@ -129,4 +129,4 @@ class yoloEncoder(tf.Module):
         return tf_record_dataset.map(lambda x, y: (
             self.transform_images_train(x),
             self.transform_label(y)
-        ))
+        ), num_parallel_calls=tf.data.experimental.AUTOTUNE)

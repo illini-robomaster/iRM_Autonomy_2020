@@ -1,3 +1,15 @@
+'''
+Steps:
+1. Run data/converters/purdue.py or data/converters/roco.py to generate tfrecord datasets
+2. Update parameters.py for dataset, ckpt, model saving and tensorboard directories
+   - Also create the dirs since tensorflow tends to not create directories
+3. Update parameters.py for batch size, learning rate to adapt your device
+4. Run train_tiny.py
+
+Optional:
+1. Tune other parameters
+'''
+
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.callbacks import (
@@ -52,8 +64,9 @@ def main():
     callbacks = [
         ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1),
         EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1),
-        ModelCheckpoint('checkpoints/yolov3_train_{epoch}.tf',
+        ModelCheckpoint(PARAM['ckpt_dir']+'yolov3_train_{epoch}.tf',
                         verbose=1, save_weights_only=True),
+        TensorBoard(log_dir=PARAM['tensorboard_dir'])
     ]
     
     model.fit(

@@ -113,13 +113,3 @@ compile_commands.json
 
 # extra rules
 /.idea
-
-# dataset
-/dnn/data/purdue
-/dnn/data/roco
-
-# Training ckpt
-/dnn/checkpoints
-
-# model
-/dnn/out

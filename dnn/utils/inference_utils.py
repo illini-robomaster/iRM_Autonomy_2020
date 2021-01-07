@@ -2,7 +2,6 @@ import tensorflow as tf
 import numpy as np
 import cv2
 
-''' in progress '''
 def draw_inference(img, outputs, class_names):
     boxes, objectness, classes, nums = outputs
     boxes, objectness, classes, nums = boxes[0], objectness[0], classes[0], nums[0]
@@ -15,6 +14,3 @@ def draw_inference(img, outputs, class_names):
             class_names[int(classes[i])], objectness[i]),
             x1y1, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 2)
     return img
-
-def reshape_img(img, shape=(416,416)):
-    pass
