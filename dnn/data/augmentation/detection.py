@@ -2,6 +2,7 @@ import math
 import tensorflow as tf
 import tensorflow_addons as tfa
 
+
 def get_affine_coeffs(output_hw, center_yx, scale_yx):
     """generate affine coefficients for tfa.image.transform
 
