@@ -3,10 +3,7 @@ import numpy as np
 import argparse
 import time
 import cv2
-import tensorflow as tf
 
-from dnn.utils.mem import tf_set_memory_growth
-tf_set_memory_growth()
 from dnn.utils.inference_utils import draw_inference
 
 CLASS_NAME = ['car', 'watcher', 'base', 'armor_red', 'armor_blue']
