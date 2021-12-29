@@ -17,6 +17,18 @@ def main():
     tf.saved_model.save(model, './save_onnx/save_model_format')
 
 
+    import tf2onnx
+    import onnxruntime as rt
+
+    spec = (tf.TensorSpec((None, 416, 416, 3), tf.float32, name="input"),)
+    output_path = './save_onnx/irm_' + model.name + ".onnx"
+    model_proto, _ = tf2onnx.convert.from_keras(model, input_signature=spec, opset=13, output_path=output_path)
+
+    print(f'Model saved at: {output_path}')
+    import onnx
+    onnx.checker.check_model(output_path)
+
+
 if __name__ == '__main__':
     # set memory growth
     tf_set_memory_growth()
