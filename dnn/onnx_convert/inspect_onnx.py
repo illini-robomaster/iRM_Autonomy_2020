@@ -16,3 +16,8 @@ print('=================================')
 print('Outputs:')
 for output in model.graph.output:
     print(MessageToDict(output))
+
+print('=================================')
+print('verify')
+onnx.checker.check_model(args.model_file)
+

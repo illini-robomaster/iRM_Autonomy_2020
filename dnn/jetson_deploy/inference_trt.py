@@ -16,10 +16,7 @@ cuda_outputs = []
 bindings = []
 
 
-def Inference(engine):
-    image = cv2.imread("/usr/src/tensorrt/data/resnet50/airliner.ppm")
-    image = (2.0 / 255.0) * image.transpose((2, 0, 1)) - 1.0
-
+def Inference(image,engine):
     np.copyto(host_inputs[0], image.ravel())
     stream = cuda.Stream()
     context = engine.create_execution_context()
@@ -37,13 +34,19 @@ def Inference(engine):
 
 def PrepareEngine():
     with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:
-        builder.max_workspace_size = 1 << 30
-        with open('/usr/src/tensorrt/data/resnet50/ResNet50.onnx', 'rb') as model:
+        # builder.max_workspace_size = 1 << 30
+        config = builder.create_builder_config()
+        config.max_workspace_size = 1 << 28
+
+        with open('./save_onnx/irm_yolov3_tiny.onnx', 'rb') as model:
             if not parser.parse(model.read()):
                 print ('ERROR: Failed to parse the ONNX file.')
                 for error in range(parser.num_errors):
                     print (parser.get_error(error))
-        engine = builder.build_cuda_engine(network)
+
+        # engine = builder.build_cuda_engine(network)
+        plan = builder.build_serialized_network(network, config)
+        engine = runtime.deserialize_cuda_engine(plan)
 
         # create buffer
         for binding in engine:
@@ -64,4 +67,6 @@ def PrepareEngine():
 
 if __name__ == "__main__":
     engine = PrepareEngine()
-    Inference(engine)
+    image = np.zeros([1,416,416,3])
+    ret = Inference(image, engine)
+    print('Inference result:', ret)

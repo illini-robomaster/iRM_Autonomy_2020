@@ -20,9 +20,9 @@ def main():
     import tf2onnx
     import onnxruntime as rt
 
-    spec = (tf.TensorSpec((None, 416, 416, 3), tf.float32, name="input"),)
+    spec = (tf.TensorSpec((1, 416, 416, 3), tf.float32, name="input"),)
     output_path = './save_onnx/irm_' + model.name + ".onnx"
-    model_proto, _ = tf2onnx.convert.from_keras(model, input_signature=spec, opset=13, output_path=output_path)
+    model_proto, _ = tf2onnx.convert.from_keras(model, input_signature=spec, opset=12, output_path=output_path)
 
     print(f'Model saved at: {output_path}')
     import onnx

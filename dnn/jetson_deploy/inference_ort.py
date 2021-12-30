@@ -1,8 +1,8 @@
+import cv2
 import onnxruntime as rt
 import numpy as np
 import argparse
 import time
-import cv2
 
 from dnn.utils.inference_utils import draw_inference
 
@@ -11,13 +11,13 @@ CLASS_NAME = ['car', 'watcher', 'base', 'armor_red', 'armor_blue']
 parser = argparse.ArgumentParser(description='Inspect an onnx model.')
 parser.add_argument('--model_file', type=str, default='./save_onnx/model.onnx', help='onnx model file to use')
 parser.add_argument('--video_file', type=str, default='./sanity.mp4', help='video model file to use')
-parser.add_argument('--display', type=bool, default=True, help='display video on screen')
+parser.add_argument('--display', type=int, default=1, help='display video on screen')
 parser.add_argument('--size', type=int, default=416, help='resize images to')
 args = parser.parse_args()
 
 print(f'Load model from: {args.model_file}')
 output_names = ['yolo_nms','yolo_nms_1','yolo_nms_2','yolo_nms_3']
-providers = ['CPUExecutionProvider']
+providers = ['CUDAExecutionProvider','CPUExecutionProvider']
 m = rt.InferenceSession(args.model_file, providers=providers)
 
 # dummy input
